@@ -46,43 +46,43 @@ export default{
     // opens the ip address dialog for this server
     async menu(){
 
-      console.log("entered menu");
       // get the current saved address from storage (if any)
       const address1 = await   Storage.get({key:"server_ip"})
       let address2;
-      console.log("address from storage='"+JSON.stringify(address1)+"'")
       if( address1.value=="undefined" || address1.value == null ) {
-        address2='1234567890';
-        console.log("passing temp address")
+        address2='';
       }
       else
          address2=address1.value;
       // create the modal dialog
       const  res= await modalController.create({ component:AddressModal,componentProps:{propAddress:address2}})
-      console.log("dialog created");
 
-      console.log("showing dialog");
       // show the dialog
       res.present();
 
       // wait for dialog to be dismissed
       const updatedObject = await res.onDidDismiss()
-      console.log("back from menu, obj="+JSON.stringify(updatedObject));
-      // Do things with data coming from modal, for instance :
+
+      // Do things with data coming from modal,  :
       // get the data from the response
+
+      // if any response
       if(updatedObject != undefined && updatedObject.data !=undefined )
       {
+        // and the action is save
         if(updatedObject.data['action']=='save')
         {
+            // if there is somethign to save
             if(updatedObject.data['address']!=undefined && updatedObject.data['address']!="")
             {
-              console.log("the server address specified was "+updatedObject.data['address']);
               Storage.set({key:"server_ip",value:updatedObject.data['address']});
             }
          }
+         // if delete op
          else   if(updatedObject.data['action']=='delete')
          {
-             Storage.remove({key:"server_ip"});
+            // clear the storage area
+            Storage.remove({key:"server_ip"});
          }
       }
       else

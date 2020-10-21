@@ -13,14 +13,14 @@
 
 </ion-header>
 
-<ion-content >
-			<p> please enter the address of the remote mirror</p>
-      <ion-list>
-      <ion-item >
-        <ion-label >Address    </ion-label>
+<ion-content style="text-align:center;">
+			<div style="text-align:center;" > please enter the address of the remote mirror</div>
+
+      <ion-item style="text-align:center;">
+        <ion-label position="stacked" >Address    </ion-label>
           <ion-input type="text" v-model="ouraddress" placeholder="mirror_address"></ion-input>
       </ion-item>
-
+      <ion-list style="text-align:center;">
        <button ion-item @click="itemSelected('save')">
            Save
        </button>
@@ -44,18 +44,17 @@ export default  defineComponent({
   components: { IonHeader, IonTitle, IonContent,IonItem,IonLabel,IonList, IonPage,IonInput},
   methods:{
     itemSelected(parm: string){
-
         if(parm=='cancel')
           modalController.dismiss({action:'cancel'});
         else if(parm=='delete')
           modalController.dismiss({action:'delete'});
         else {
-          console.log("ouraddress='"+this.ouraddress+"'")
           modalController.dismiss({action: 'save', address: this.ouraddress });
         }
     }
   },
   props: {
+    // define one parameter passed as a string
     propAddress: {
          type: String,
          default: '1234567'
@@ -63,6 +62,7 @@ export default  defineComponent({
   },
   data(){
     return {
+      // use the passed parameter for the initial value in the field
       'ouraddress':this.propAddress
     };
   }
