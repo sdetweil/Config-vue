@@ -13,13 +13,14 @@
 
 </ion-header>
 
-<ion-content style="text-align:center;">
+<ion-content >
 			<p> please enter the address of the remote mirror</p>
-      <ion-item>
-        <ion-label fixed>Address</ion-label>
-          <ion-input id="ouraddress" type="text" placeholder="mirror_address">{{propAddress}}</ion-input>
-        </ion-item>
       <ion-list>
+      <ion-item >
+        <ion-label >Address    </ion-label>
+          <ion-input type="text" v-model="ouraddress" placeholder="mirror_address"></ion-input>
+      </ion-item>
+
        <button ion-item @click="itemSelected('save')">
            Save
        </button>
@@ -49,17 +50,8 @@ export default  defineComponent({
         else if(parm=='delete')
           modalController.dismiss({action:'delete'});
         else {
-          /*let foo;
-          const el = document.getElementById('ouraddress')
-          if(el){
-             console.log("have element")
-             foo =el.value;
-             console.log("element value="+foo)
-          } else {
-            console.log('did not find element')
-          }*/
-
-          modalController.dismiss({action: 'save', address: '12345' });
+          console.log("ouraddress='"+this.ouraddress+"'")
+          modalController.dismiss({action: 'save', address: this.ouraddress });
         }
     }
   },
@@ -69,5 +61,10 @@ export default  defineComponent({
          default: '1234567'
        }
   },
+  data(){
+    return {
+      'ouraddress':this.propAddress
+    };
+  }
 });
 </script>

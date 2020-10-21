@@ -74,7 +74,7 @@ export default{
       {
         if(updatedObject.data['action']=='save')
         {
-            if(updatedObject.data['address']!=undefined)
+            if(updatedObject.data['address']!=undefined && updatedObject.data['address']!="")
             {
               console.log("the server address specified was "+updatedObject.data['address']);
               Storage.set({key:"server_ip",value:updatedObject.data['address']});
