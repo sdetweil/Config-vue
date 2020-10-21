@@ -1,0 +1,39 @@
+<template>
+  <Header  :info=info ></Header>
+  <Content :info=info :data=data></Content>
+  <Footer ></Footer>
+</template>
+
+<script lang='ts'>
+import Footer from '../components/FooterComponent.vue'
+import Header from '../components/HeaderComponent.vue'
+import Content from '../components/ContentComponent.vue'
+
+export default{
+  name: 'Slide',
+  components: { Footer,Header, Content },
+ props: {
+    info: { type: Object,
+         name: {
+           type: String,
+           default: function () {
+             return 'Sample'
+           }
+         },
+         fields: {
+           type: Array,
+           default: function() {
+             return [{Name: 'Test', width: 10}]
+           }
+         }
+     },
+       data: {
+         type:Object,
+         default: function() {
+           return {}
+         }
+       }
+   },
+}
+
+</script>
