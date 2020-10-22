@@ -5,7 +5,7 @@
         <!-- <addicon v-if="getselectedRow(info.Type)<0"/> -->
         <!-- <editicon v-else/> -->
       <button ion-button icon-only @click="addeditClicked(1,getselectedRow(info.Type),info.Type,{true:'add',false:'edit'}[getselectedRow(info.Type)<0])">
-        <ion-icon :icon="getselectedRow(info.Type)<0 ? addCircleSharp :searchSharp"/>
+        <ion-icon :icon="getselectedRow(info.Type)<0 ? addSharp :searchSharp"/>
       </button>
     </ion-buttons>
      <ion-title style="text-align: center;">{{info.Type}}s</ion-title>

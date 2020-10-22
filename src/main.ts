@@ -22,11 +22,14 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+//import VueHammer  from 'vue2-hammer';
 
 const app = createApp(App)
   .use(IonicVue)
   .use(router);
-  
+
+//app.use(VueHammer)
+
 router.isReady().then(() => {
   app.mount('#app');
 });

@@ -1,9 +1,9 @@
 <template>
   <ion-page>
-    <ion-content>
-    <ion-slides >
-        <ion-slide style="display:block;" v-for="(slide,i) in slides" :key="i">
-          <Slide :info=slide :data=data></Slide>
+    <ion-content :fullscreen="true">
+    <ion-slides  ref="slides1" :options="slideOps">
+        <ion-slide   style="display:block;" v-for="(slide,i) in slides" :key="i" >
+          <Slide   :info=slide :data=data @changepage="changepage"></Slide>
         </ion-slide>
     </ion-slides>
     </ion-content>
@@ -19,6 +19,26 @@ import Slide from '../components/SlideComponent.vue'
 export default{
   name: 'Tab1',
   components: {  IonPage,  IonSlide, IonSlides, Slide , IonContent},
+  emits: ['changepage'],
+  methods:{
+     changepage1(direction){
+       console.log("received change page event, direction="+direction)
+       this.$emit('changepage',direction)
+     },
+     changepage(direction){
+
+      console.log("changing slide direction="+direction+" this="+JSON.stringify(this)+" refs="+JSON.stringify(this.$refs)+" slides1="+JSON.stringify(this.$refs.slides1))
+      if(direction){
+        for(const key of Object.keys(this.$refs.slides1)){
+           console.log("slides1 key="+key)
+        }
+        this.$refs.slides1.slideNext()
+      }
+      else
+        this.$refs.slides1.slidePrev()
+        console.log("next event")
+     }
+  },
 
 setup(){
 
@@ -66,7 +86,10 @@ setup(){
                     ]
                };
   const slides = [viewerFields,dataSourceFields,imageFields, tagFields];
-  return { data, slides };
+  const slideOps = { loop:true}
+  return { data, slides , slideOps};
+
 }
+
 }
 </script>

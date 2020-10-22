@@ -19,16 +19,23 @@
 </template>
 <script >
 
-import { IonToolbar,   IonButtons, IonFooter,  }  from '@ionic/vue';
+import { IonToolbar,   IonButtons, IonFooter}  from '@ionic/vue';
 import  arrowback from './arrowback';
 import  arrowforward from './arrowforward';
 
 export default{
   name: 'Footer',
+  emits:['changepage'],
   components: { IonToolbar,   IonButtons, IonFooter,  arrowback, arrowforward} ,
   methods:{
-    next(x){ console.log("next clicked type="+x);return x},
-    back(x){ console.log("back clicked type="+x);return x},
+    next(){
+      console.log("emit forward")
+      this.$emit('changepage',1)
+    },
+    back(){
+      console.log("emit back")
+      this.$parent.$emit('changepage',0)
+    },
   }
 }
 </script>

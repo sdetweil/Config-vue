@@ -14,6 +14,7 @@
 </ion-header>
 
 <ion-content style="text-align:center;">
+      <div></div><br><br>
 			<div style="text-align:center;" > please enter the address of the remote mirror</div>
 
       <ion-item style="text-align:center;">
