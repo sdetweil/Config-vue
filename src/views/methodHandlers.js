@@ -3,6 +3,7 @@
 
 
   const _eventHandlers = {};
+  const _selected = {};
   export const publicProperty = 'I am a public property';
 
 
@@ -28,5 +29,15 @@
           obj.func(obj.ctx)
         }
       }
+    }
+    export function getSelectedRow(type){
+      if( _selected[type] == undefined )
+        return -1
+      else
+      return _selected[type];
+    }
+    export function setSelectedRow(type,index){
+        console.log("setting selected for "+type + " to "+index )
+        _selected[type]=index;
     }
 //})();

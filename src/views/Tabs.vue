@@ -38,7 +38,7 @@ export default{
            console.log("slides1 key="+key)
         }
         methodHandlers.invokeHandlers("advanceSlide")
-        //this.$refs.slides1.slideNext()
+        this.$refs.slides1.slideNext()
       }
       else
         methodHandlers.invokeHandlers("reverseSlide")
@@ -61,7 +61,7 @@ setup(context){
      };
   const reverseSlide = function(ctx){
         console.log("handler invoked")
-       ctx.$refs.slides1.slidePrev()
+       ctx.$refs.slides1.$el.slidePrev()
      };
 
   const adatasource={Name:'datasource name',Type:{Type:" local"}, Active: true,Root:"/",id:9};
@@ -112,6 +112,10 @@ setup(context){
   console.log(" prop="+JSON.stringify(methodHandlers))
   methodHandlers.registerHandler('advanceSlide',{func:advanceSlide1, ctx:null } )
   methodHandlers.registerHandler('reverseSlide',{func:reverseSlide, ctx:context } )
+  methodHandlers.setSelectedRow('Viewer',-1);
+  methodHandlers.setSelectedRow('DataSource',-1);
+  methodHandlers.setSelectedRow('Image',-1);
+  methodHandlers.setSelectedRow('Tag',-1);
   return { data, slides , slideOps};
 }
 }

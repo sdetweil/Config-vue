@@ -34,15 +34,20 @@ import AddressModal from './AddressModal.vue';
 
 import { addCircleSharp , searchSharp, menuSharp} from "ionicons/icons";
 import { addIcons } from "ionicons";
+import * as methodHandlers from '../views/methodHandlers.js'
+
 const { Storage } = Plugins;
 
 export default{
   Name: 'Header',
   components: { IonHeader, IonToolbar, IonTitle,IonButtons,  IonRow,IonCol, IonIcon } ,
+
   methods:{
     addeditClicked(mode, row, type, imageName){ console.log("addedit clicked type="+type+" returning imagename="+imageName);return imageName},
-    getselectedRow(x){ console.log("getselected clicked type="+x);return 1},
-
+    getselectedRow(type){
+      console.log("header get selected returning "+methodHandlers.getSelectedRow(type)+" type="+type);
+      return methodHandlers.getSelectedRow(type);
+    },
     // opens the ip address dialog for this server
     async menu(){
 
@@ -116,6 +121,10 @@ export default{
      }
   },
   setup(){
+    //methodHandlers.setSelectedRow('Viewer',-1);
+    //methodHandlers.setSelectedRow('DataSource',-1);
+    //methodHandlers.setSelectedRow('Image',-1);
+    //methodHandlers.setSelectedRow('Tag',-1);
    return {addCircleSharp , searchSharp, menuSharp}
   }
 }

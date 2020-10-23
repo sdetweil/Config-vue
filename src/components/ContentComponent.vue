@@ -1,10 +1,10 @@
 <template>
 <!-- ion-content style="height=100%"> -->
-  <ion-row ref="info.Type" v-for="(row,i) in data[info.Type+'s']" :key="row+'.Name'"
+  <ion-row :ref="info.Type+i" v-for="(row,i) in data[info.Type+'s']" :key="row+'.Name'"
       v-press @press="deleteRow(i, info.Type)"
-      @dbltap="addeditClicked(2,i,info.Type,'edit')"
+      v-dbltap @dbltap="addeditClicked(2,i,info.Type,'edit', $event)"
     >
-    <ion-col v-for="(field) in info.Fields" :key="field.Name" :size="field.width" class = " colb  center " @click="setClickedRow(i,info.Type,field.Name)" >
+    <ion-col v-for="(field) in info.Fields" :key="field.Name" :size="field.width" class = " colb  center " @click="setClickedRow(i,info.Type,field.Name, $event)" >
       <ion-list v-if="field.Name=='Tags'"  >
         <ion-item v-for="(id,i) of row[field.Name]" :key="i" class = " colb  center ">
           {{tagfromID(id)}}
@@ -34,6 +34,7 @@ import { IonRow, IonCol,IonList, IonItem} from '@ionic/vue';
 //import * as Hammer from 'hammerjs';
 import { createGesture } from '@ionic/vue'; //from 'https://cdn.jsdelivr.net/npm/@ionic/core@latest/dist/esm/index.mjs';
 import * as methodHandlers from '../views/methodHandlers.js'
+import '../../public/css/custom.css';
 
 
 export default{
@@ -64,21 +65,21 @@ export default{
    },
 
 directives:{
-    press: {
+    dbltap: {
       created:function(el){
         console.log("dbltap created")
         console.log("parms="+JSON.stringify(el,' ',2))
       },
       mounted(el){
         let lastOnStart = 0;
-        const onStart = function(data) {
+        const onStart = function() {
             const DOUBLE_CLICK_THRESHOLD = 500;
 
             const now = Date.now();
 
             if (Math.abs(now - lastOnStart) <= DOUBLE_CLICK_THRESHOLD) {
               console.log("should fire")
-              methodHandlers.invokeHandlers('press')
+              methodHandlers.invokeHandlers('dbltap')
               lastOnStart = 0;
             } else {
               lastOnStart = now;
@@ -101,7 +102,7 @@ directives:{
          console.log("dbltap unbind called")
       }
     },
-    dbltap:{
+    press:{
 
       unbind: function(){
          console.log("press unbind called")
@@ -141,21 +142,66 @@ methods:{
       }
       return x+' not found'
   },
-
-  addeditClicked(mode, row, type, imageName){ console.log("addedit clicked mode="+mode+" type="+type+" returning imagename="+imageName);return imageName},
+  getselectedRow(type){
+    //console.log("get selected returning "+this.selectedRow[type]+" type="+type);
+    return methodHandlers.getSelectedRow(type);
+  },
+  addeditClicked(mode, row, type, imageName){
+    console.log("addedit clicked mode="+mode+" type="+type+" returning imagename="+imageName);return imageName
+  },
   deleteRow(index, type){ console.log("delete row directive called="+index+" type="+type); return},
-  setClickedRow(index, type, field){console.log("setClickedRow clicked index="+index+" type="+type+" field="+field); return}
+
+  removeString(source, item){
+    //console.log("splitting ="+source)
+    const x = source.split(' ')
+     //console.log("splitting  after="+JSON.stringify(x))
+    const y= x.indexOf(item.trim())
+    //console.log("index of "+item+" is "+y)
+    if(y>-1) {
+      x.splice(y,1)
+      //console.log("after removal="+JSON.stringify(x))
+    }
+    return x.join(' ')
+  },
+
+  setClickedRow(index, type, field, me){
+  console.log("setclickedRow refs="+JSON.stringify(this.$refs))
+  // if on , toggle off
+  let selectedClass=' not-selected';                        //  color   'white';
+  // if already selected
+  if(methodHandlers.getSelectedRow(type) != -1){
+    console.log("clearing selection for row = "+methodHandlers.getSelectedRow(type))
+    selectedClass=' selected'
+    this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className=this.removeString(this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className,selectedClass);                                         //style='background-color:'+selectedClass+';';
+    // if the current index is NOT  the same (we are selecting a different row)
+    if(index != methodHandlers.getSelectedRow(type)){
+      methodHandlers.setSelectedRow('Viewer',index);
+    }
+    else {
+      // we are deselecting the same row, already done
+      methodHandlers.setSelectedRow(type,-1);
+      return
+    }
+
+  } else {
+    methodHandlers.setSelectedRow(type,index);
+    selectedClass=' selected' //                      'blue'
+  }
+  this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className+=selectedClass                                                                         //style='background-color:'+style1+';';
+
+  console.log("setClickedRow clicked index="+index+" type="+type+" field="+field); return}
 },
   data(){
     const pressGesture=0;
     const lastOnStart=0;
+
     return{ pressGesture, lastOnStart}
   },
   setup(){
         function signalPress(){
-          this.$emit('press')
+          this.$emit('dbltap')
         }
-        methodHandlers.registerHandler('press', {func:signalPress, ctx: null})
+        methodHandlers.registerHandler('dbltap', {func:signalPress, ctx: null})
   }
 }
 </script>
