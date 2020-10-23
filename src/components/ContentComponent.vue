@@ -1,5 +1,5 @@
 <template>
-<!-- <ion-content> -->
+<!-- ion-content style="height=100%"> -->
   <ion-row ref="info.Type" v-for="(row,i) in data[info.Type+'s']" :key="row+'.Name'"
       v-press @press="deleteRow(i, info.Type)"
       @dbltap="addeditClicked(2,i,info.Type,'edit')"
@@ -27,12 +27,14 @@
   </ion-row>
   <!-- </ion-grid> -->
  <!-- </ion-content> -->
-</template>
+ </template>
 
 <script >
-import { IonRow, IonCol,IonList, IonItem } from '@ionic/vue';
+import { IonRow, IonCol,IonList, IonItem} from '@ionic/vue';
 //import * as Hammer from 'hammerjs';
 import { createGesture } from '@ionic/vue'; //from 'https://cdn.jsdelivr.net/npm/@ionic/core@latest/dist/esm/index.mjs';
+import * as methodHandlers from '../views/methodHandlers.js'
+
 
 export default{
   name: 'Content',
@@ -76,7 +78,7 @@ directives:{
 
             if (Math.abs(now - lastOnStart) <= DOUBLE_CLICK_THRESHOLD) {
               console.log("should fire")
-              data.$emit('dbltap')
+              methodHandlers.invokeHandlers('press')
               lastOnStart = 0;
             } else {
               lastOnStart = now;
@@ -149,5 +151,11 @@ methods:{
     const lastOnStart=0;
     return{ pressGesture, lastOnStart}
   },
+  setup(){
+        function signalPress(){
+          this.$emit('press')
+        }
+        methodHandlers.registerHandler('press', {func:signalPress, ctx: null})
+  }
 }
 </script>

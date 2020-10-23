@@ -34,7 +34,7 @@ export default{
     },
     back(){
       console.log("emit back")
-      this.$parent.$emit('changepage',0)
+      this.$emit('changepage',0)
     },
   }
 }

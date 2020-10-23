@@ -14,6 +14,7 @@
 
 import { IonPage, IonSlide, IonSlides,IonContent } from '@ionic/vue'; //IonRefresher, IonSlide, IonSlides, IonContent,  IonRow, IonCol , IonList, IonItem,
 import Slide from '../components/SlideComponent.vue'
+import * as methodHandlers from './methodHandlers.js'
 
 
 export default{
@@ -21,6 +22,10 @@ export default{
   components: {  IonPage,  IonSlide, IonSlides, Slide , IonContent},
   emits: ['changepage'],
   methods:{
+     advanceSlide(ctx) {
+       console.log("handler invoked")
+       ctx.$refs.slides1.slideNext()
+     },
      changepage1(direction){
        console.log("received change page event, direction="+direction)
        this.$emit('changepage',direction)
@@ -32,15 +37,32 @@ export default{
         for(const key of Object.keys(this.$refs.slides1)){
            console.log("slides1 key="+key)
         }
-        this.$refs.slides1.slideNext()
+        methodHandlers.invokeHandlers("advanceSlide")
+        //this.$refs.slides1.slideNext()
       }
       else
-        this.$refs.slides1.slidePrev()
+        methodHandlers.invokeHandlers("reverseSlide")
+        //this.$refs.slides1.slidePrev()
         console.log("next event")
      }
   },
 
-setup(){
+data(){
+    const r=this.$refs;
+    return {r}
+},
+
+setup(context){
+
+  const advanceSlide1 = (ctx) => {
+        console.log("handler invoked")
+        console.log("this="+JSON.stringify(this))
+        this.slides1.slideNext()
+     };
+  const reverseSlide = function(ctx){
+        console.log("handler invoked")
+       ctx.$refs.slides1.slidePrev()
+     };
 
   const adatasource={Name:'datasource name',Type:{Type:" local"}, Active: true,Root:"/",id:9};
 
@@ -87,9 +109,10 @@ setup(){
                };
   const slides = [viewerFields,dataSourceFields,imageFields, tagFields];
   const slideOps = { loop:true}
+  console.log(" prop="+JSON.stringify(methodHandlers))
+  methodHandlers.registerHandler('advanceSlide',{func:advanceSlide1, ctx:null } )
+  methodHandlers.registerHandler('reverseSlide',{func:reverseSlide, ctx:context } )
   return { data, slides , slideOps};
-
 }
-
 }
 </script>

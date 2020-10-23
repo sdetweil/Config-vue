@@ -1,6 +1,6 @@
 <template>
   <Header  :info=info ></Header>
-  <Content :info=info :data=data></Content>
+  <Content :info=info :data=data ></Content>
   <Footer @changepage="changepage"></Footer>
 </template>
 
@@ -8,7 +8,6 @@
 import Footer from '../components/FooterComponent.vue'
 import Header from '../components/HeaderComponent.vue'
 import Content from '../components/ContentComponent.vue'
-
 
 
 export default{
