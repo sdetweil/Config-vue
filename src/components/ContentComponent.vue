@@ -180,6 +180,7 @@ methods:{
     else {
       // we are deselecting the same row, already done
       methodHandlers.setSelectedRow(type,-1);
+      methodHandlers.invokeHandlers("HeaderFresh")
       return
     }
 
@@ -189,7 +190,10 @@ methods:{
   }
   this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className+=selectedClass                                                                         //style='background-color:'+style1+';';
 
-  console.log("setClickedRow clicked index="+index+" type="+type+" field="+field); return}
+  console.log("setClickedRow clicked index="+index+" type="+type+" field="+field);
+  methodHandlers.invokeHandlers("HeaderFresh")
+  return
+  }
 },
   data(){
     const pressGesture=0;

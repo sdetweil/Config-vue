@@ -31,10 +31,14 @@
       }
     }
     export function getSelectedRow(type){
-      if( _selected[type] == undefined )
-        return -1
+      if(type != undefined){
+        if( _selected[type] == undefined )
+          return -1
+        else
+          return _selected[type];
+      }
       else
-      return _selected[type];
+        return -1;
     }
     export function setSelectedRow(type,index){
         console.log("setting selected for "+type + " to "+index )

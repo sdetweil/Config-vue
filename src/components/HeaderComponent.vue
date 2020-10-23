@@ -41,13 +41,15 @@ const { Storage } = Plugins;
 export default{
   Name: 'Header',
   components: { IonHeader, IonToolbar, IonTitle,IonButtons,  IonRow,IonCol, IonIcon } ,
-
-  methods:{
-    addeditClicked(mode, row, type, imageName){ console.log("addedit clicked type="+type+" returning imagename="+imageName);return imageName},
+  computed:{
     getselectedRow(type){
-      console.log("header get selected returning "+methodHandlers.getSelectedRow(type)+" type="+type);
+      //console.log("header get selected returning "+methodHandlers.getSelectedRow(type)+" type="+type);
       return methodHandlers.getSelectedRow(type);
     },
+  },
+  methods:{
+    addeditClicked(mode, row, type, imageName){ console.log("addedit clicked type="+type+" returning imagename="+imageName);return imageName},
+
     // opens the ip address dialog for this server
     async menu(){
 
@@ -121,10 +123,10 @@ export default{
      }
   },
   setup(){
-    //methodHandlers.setSelectedRow('Viewer',-1);
-    //methodHandlers.setSelectedRow('DataSource',-1);
-    //methodHandlers.setSelectedRow('Image',-1);
-    //methodHandlers.setSelectedRow('Tag',-1);
+    function refresh(){
+      this.$forceUpdate()
+    }
+    methodHandlers.registerHandler("HeaderFresh", {func:refresh, ctx: null})
    return {addCircleSharp , searchSharp, menuSharp}
   }
 }
