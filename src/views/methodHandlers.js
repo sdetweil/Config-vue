@@ -25,7 +25,7 @@
     export function invokeHandlers (name){
       if(_eventHandlers[name] != undefined){
         for(const obj of _eventHandlers[name]){
-          console.log("invoking handler for ="+name)
+          console.log("invoking handler for ="+name+" ctx="+obj.ctx)
           obj.func(obj.ctx)
         }
       }

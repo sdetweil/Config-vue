@@ -2,7 +2,7 @@
 <!-- ion-content style="height=100%"> -->
   <ion-row :ref="info.Type+i" v-for="(row,i) in data[info.Type+'s']" :key="row+'.Name'"
       v-press @press="deleteRow(i, info.Type)"
-      v-dbltap @dbltap="addeditClicked(2,i,info.Type,'edit', $event)"
+       v-dbltap="addeditClicked(2,i,info.Type,'edit', $event)"
     >
     <ion-col v-for="(field) in info.Fields" :key="field.Name" :size="field.width" class = " colb  center " @click="setClickedRow(i,info.Type,field.Name, $event)" >
       <ion-list v-if="field.Name=='Tags'"  >
@@ -72,19 +72,20 @@ directives:{
       },
       mounted(el){
         let lastOnStart = 0;
-        const onStart = function() {
+        const onStart = function(ctx) {
             const DOUBLE_CLICK_THRESHOLD = 500;
 
             const now = Date.now();
 
             if (Math.abs(now - lastOnStart) <= DOUBLE_CLICK_THRESHOLD) {
-              console.log("should fire")
-              methodHandlers.invokeHandlers('dbltap')
+              console.log("should fire dbltap"+JSON.stringify(ctx))
+              methodHandlers.invokeHandlers('dbltap'+ctx)
               lastOnStart = 0;
             } else {
               lastOnStart = now;
             }
           }
+          console.log("create gesture this ="+JSON.stringify(el))
         const gesture = createGesture({
           el:el,
           threshold: 0,
@@ -127,6 +128,10 @@ directives:{
 },
 
 methods:{
+  getselectedRow(type){
+    //console.log("get selected returning "+this.selectedRow[type]+" type="+type);
+    return methodHandlers.getSelectedRow(type);
+  },
   tagfromID (x){
       for(const tag of this.data.Tags){
          if(tag.id == x) {
@@ -142,10 +147,7 @@ methods:{
       }
       return x+' not found'
   },
-  getselectedRow(type){
-    //console.log("get selected returning "+this.selectedRow[type]+" type="+type);
-    return methodHandlers.getSelectedRow(type);
-  },
+
   addeditClicked(mode, row, type, imageName){
     console.log("addedit clicked mode="+mode+" type="+type+" returning imagename="+imageName);return imageName
   },
@@ -164,7 +166,7 @@ methods:{
     return x.join(' ')
   },
 
-  setClickedRow(index, type, field, me){
+  setClickedRow(index, type, field){
   console.log("setclickedRow refs="+JSON.stringify(this.$refs))
   // if on , toggle off
   let selectedClass=' not-selected';                        //  color   'white';
@@ -180,7 +182,7 @@ methods:{
     else {
       // we are deselecting the same row, already done
       methodHandlers.setSelectedRow(type,-1);
-      methodHandlers.invokeHandlers("HeaderFresh")
+      methodHandlers.invokeHandlers("HeaderFresh"+type)
       return
     }
 
@@ -191,9 +193,20 @@ methods:{
   this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className+=selectedClass                                                                         //style='background-color:'+style1+';';
 
   console.log("setClickedRow clicked index="+index+" type="+type+" field="+field);
-  methodHandlers.invokeHandlers("HeaderFresh")
+  methodHandlers.invokeHandlers("HeaderFresh"+type)
   return
+  },
+
+
+  signalPress(type){
+      // double tap event fire
+      console.log("emitting doubletap")
+      this.$emit('dbltap'+type)
   }
+},
+created(){
+   console.log("content created this="+JSON.stringify(this))
+   methodHandlers.registerHandler('dbltap'+this.info.Type, {func:this.signalPress, ctx:this.info.Type})
 },
   data(){
     const pressGesture=0;
@@ -201,11 +214,5 @@ methods:{
 
     return{ pressGesture, lastOnStart}
   },
-  setup(){
-        function signalPress(){
-          this.$emit('dbltap')
-        }
-        methodHandlers.registerHandler('dbltap', {func:signalPress, ctx: null})
-  }
 }
 </script>

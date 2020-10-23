@@ -22,6 +22,15 @@ export default{
   components: {  IonPage,  IonSlide, IonSlides, Slide , IonContent},
   emits: ['changepage'],
   methods:{
+    advanceSlide1() {
+        console.log("handler invoked")
+        console.log("this="+JSON.stringify(this))
+        this.$refs.slides1.slideNext()
+     },
+    reverseSlide(){
+        console.log("handler invoked")
+       this.$refs.slides1.slidePrev()
+     },
      advanceSlide(ctx) {
        console.log("handler invoked")
        ctx.$refs.slides1.slideNext()
@@ -38,31 +47,28 @@ export default{
            console.log("slides1 key="+key)
         }
         methodHandlers.invokeHandlers("advanceSlide")
-        this.$refs.slides1.slideNext()
+        //this.$refs.slides1.slideNext()
       }
       else
         methodHandlers.invokeHandlers("reverseSlide")
-        //this.$refs.slides1.slidePrev()
+        this.$refs.slides1.slidePrev()
         console.log("next event")
      }
   },
 
-data(){
-    const r=this.$refs;
-    return {r}
+created(){
+
+  methodHandlers.registerHandler('advanceSlide',{func:this.advanceSlide1, ctx:null } )
+  methodHandlers.registerHandler('reverseSlide',{func:this.reverseSlide, ctx:null } )
+  methodHandlers.setSelectedRow('Viewer',-1);
+  methodHandlers.setSelectedRow('DataSource',-1);
+  methodHandlers.setSelectedRow('Image',-1);
+  methodHandlers.setSelectedRow('Tag',-1);
+
 },
+setup(){
 
-setup(context){
 
-  const advanceSlide1 = (ctx) => {
-        console.log("handler invoked")
-        console.log("this="+JSON.stringify(this))
-        this.slides1.slideNext()
-     };
-  const reverseSlide = function(ctx){
-        console.log("handler invoked")
-       ctx.$refs.slides1.$el.slidePrev()
-     };
 
   const adatasource={Name:'datasource name',Type:{Type:" local"}, Active: true,Root:"/",id:9};
 
@@ -110,12 +116,7 @@ setup(context){
   const slides = [viewerFields,dataSourceFields,imageFields, tagFields];
   const slideOps = { loop:true}
   console.log(" prop="+JSON.stringify(methodHandlers))
-  methodHandlers.registerHandler('advanceSlide',{func:advanceSlide1, ctx:null } )
-  methodHandlers.registerHandler('reverseSlide',{func:reverseSlide, ctx:context } )
-  methodHandlers.setSelectedRow('Viewer',-1);
-  methodHandlers.setSelectedRow('DataSource',-1);
-  methodHandlers.setSelectedRow('Image',-1);
-  methodHandlers.setSelectedRow('Tag',-1);
+
   return { data, slides , slideOps};
 }
 }

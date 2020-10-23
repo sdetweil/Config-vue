@@ -5,7 +5,7 @@
         <!-- <addicon v-if="getselectedRow(info.Type)<0"/> -->
         <!-- <editicon v-else/> -->
       <button ion-button icon-only @click="addeditClicked(1,getselectedRow(info.Type),info.Type,{true:'add',false:'edit'}[getselectedRow(info.Type)<0])">
-        <ion-icon :icon="getselectedRow(info.Type)<0 ? addSharp :searchSharp"/>
+        <ion-icon :icon="getselectedRow(info.Type)<0 ? addCircleSharp :searchSharp"/>
       </button>
     </ion-buttons>
      <ion-title style="text-align: center;">{{info.Type}}s</ion-title>
@@ -33,7 +33,7 @@ import { IonHeader, IonToolbar, IonTitle, IonButtons, IonRow,IonCol,IonIcon, mod
 import AddressModal from './AddressModal.vue';
 
 import { addCircleSharp , searchSharp, menuSharp} from "ionicons/icons";
-import { addIcons } from "ionicons";
+//import { addIcons } from "ionicons";
 import * as methodHandlers from '../views/methodHandlers.js'
 
 const { Storage } = Plugins;
@@ -42,14 +42,19 @@ export default{
   Name: 'Header',
   components: { IonHeader, IonToolbar, IonTitle,IonButtons,  IonRow,IonCol, IonIcon } ,
   computed:{
-    getselectedRow(type){
-      //console.log("header get selected returning "+methodHandlers.getSelectedRow(type)+" type="+type);
-      return methodHandlers.getSelectedRow(type);
-    },
+
   },
   methods:{
+    refresh(){
+      console.log("refresh")
+      this.$forceUpdate()
+    },
     addeditClicked(mode, row, type, imageName){ console.log("addedit clicked type="+type+" returning imagename="+imageName);return imageName},
-
+    getselectedRow(type){
+      console.log("header get selected returning "+methodHandlers.getSelectedRow(type)+" type="+type);
+      const t= methodHandlers.getSelectedRow(type);
+      return t;
+    },
     // opens the ip address dialog for this server
     async menu(){
 
@@ -99,12 +104,16 @@ export default{
     }
 
   },
-  created(){
+ /* created(){
     addIcons({
       "add": addCircleSharp,
       "search": searchSharp,
       "menu": menuSharp
     });
+  }, */
+  created(){
+       console.log(" header created ="+JSON.stringify(this))
+       methodHandlers.registerHandler("HeaderFresh"+this.info.Type, {func:this.refresh, ctx: null})
   },
   props: {
     info: { type: Object,
@@ -123,10 +132,8 @@ export default{
      }
   },
   setup(){
-    function refresh(){
-      this.$forceUpdate()
-    }
-    methodHandlers.registerHandler("HeaderFresh", {func:refresh, ctx: null})
+
+
    return {addCircleSharp , searchSharp, menuSharp}
   }
 }
