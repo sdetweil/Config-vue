@@ -16,7 +16,6 @@ export default {
     const callbackEventOccurred = ref(false)
 
     function updateCallbackEvent() {
-      console.log("callback")
       callbackEventOccurred.value = true
     }
     const eventID = registerForEvent(eventName.value, updateCallbackEvent)

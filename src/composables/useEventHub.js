@@ -34,8 +34,7 @@ export function useEventHub() {
   function emitEvent(eventName){
     if(eventHandlers[eventName] != undefined){
       for(const callBackID of eventHandlers[eventName]){
-        const func = events[callBackID].callback
-        func()
+        events[callBackID].callback()
       }
     }
   }
