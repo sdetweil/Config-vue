@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true">
-    <ion-slides  ref="slides1" :options="slideOps">
+    <ion-slides  ref="slides1" > <!-- :options="slideOps" -->
         <ion-slide   style="display:block;" v-for="(slide,i) in slides" :key="i" >
           <Slide   :info=slide :data=data @changepage="changepage"></Slide>
         </ion-slide>
@@ -22,15 +22,6 @@ export default{
   components: {  IonPage,  IonSlide, IonSlides, Slide , IonContent},
   emits: ['changepage'],
   methods:{
-    advanceSlide1() {
-        console.log("forward slide handler invoked")
-        //console.log("this="+JSON.stringify(this.$refs))
-        this.$refs.slides1.$el.slideNext()
-     },
-    reverseSlide(){
-       console.log("reverse slide handler invoked")
-       this.$refs.slides1.$el.slidePrev()
-     },
 
      changepage(direction){
       console.log("changing slide direction="+direction)
@@ -47,8 +38,6 @@ export default{
 
 created(){
 
-  //methodHandlers.registerHandler('advanceSlide',{func:this.advanceSlide1, ctx:null } )
-  //methodHandlers.registerHandler('reverseSlide',{func:this.reverseSlide, ctx:null } )
   methodHandlers.setSelectedRow('Viewer',-1);
   methodHandlers.setSelectedRow('DataSource',-1);
   methodHandlers.setSelectedRow('Image',-1);

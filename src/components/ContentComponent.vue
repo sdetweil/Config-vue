@@ -206,7 +206,12 @@ methods:{
       // double tap event fire
       //console.log("emitting doubletap r="+type+" "+JSON.stringify(this.$refs))
       // use the type and selected row to fire appropriate event..
-      this.$refs[type+methodHandlers.getSelectedRow(type)].$emit('dbltap')
+      try {
+        this.$refs[type+methodHandlers.getSelectedRow(type)].$emit('dbltap')
+      }
+      catch(error){
+        console.log("")
+      }
       //
   }
 },
