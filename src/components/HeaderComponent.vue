@@ -45,16 +45,22 @@ export default{
 
   },
   methods:{
+    // when the content component selects a row, our button icon functions need to be called
     refresh(){
       console.log("refresh")
       this.$forceUpdate()
     },
+
+
     addeditClicked(mode, row, type, imageName){ console.log("addedit clicked type="+type+" returning imagename="+imageName);return imageName},
+
+    // get the row that is selected
     getselectedRow(type){
       console.log("header get selected returning "+methodHandlers.getSelectedRow(type)+" type="+type);
       const t= methodHandlers.getSelectedRow(type);
       return t;
     },
+
     // opens the ip address dialog for this server
     async menu(){
 
@@ -111,10 +117,13 @@ export default{
       "menu": menuSharp
     });
   }, */
+
+  // this component is created, not do initialization of any data
   created(){
        console.log(" header created ="+JSON.stringify(this))
        methodHandlers.registerHandler("HeaderFresh"+this.info.Type, {func:this.refresh, ctx: null})
   },
+
   props: {
     info: { type: Object,
          Name: {

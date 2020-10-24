@@ -3,7 +3,10 @@
   <ion-row :ref="info.Type+i" v-for="(row,i) in data[info.Type+'s']" :key="row+'.Name'"
       v-press="info.Type" @press="deleteRow(i, info.Type)"
       v-dbltapd="info.Type"   @dbltap="addeditClicked(2,i,info.Type,'edit', $event)"
+      v-bind:class="[i == getselectedRow(info.Type) ? selected : '']"
     >
+    <!--  -->
+    <!-- {true:'selected',false:''}[i ==  getselectedRow(info.Type)] -->
     <ion-col v-for="(field) in info.Fields" :key="field.Name" :size="field.width" class = " colb  center " @click="setClickedRow(i,info.Type,field.Name, $event)" >
       <ion-list v-if="field.Name=='Tags'"  >
         <ion-item v-for="(id,i) of row[field.Name]" :key="i" class = " colb  center ">
@@ -170,35 +173,42 @@ methods:{
     return x.join(' ')
   },
 
+  // set the row clicked and change the class name
   setClickedRow(index, type, field){
-  console.log("setclickedRow refs="+JSON.stringify(this.$refs))
-  // if on , toggle off
-  let selectedClass=' not-selected';                        //  color   'white';
-  // if already selected
-  if(methodHandlers.getSelectedRow(type) != -1){
-    console.log("clearing selection for row = "+methodHandlers.getSelectedRow(type))
-    selectedClass=' selected'
-    this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className=this.removeString(this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className,selectedClass);                                         //style='background-color:'+selectedClass+';';
-    // if the current index is NOT  the same (we are selecting a different row)
-    if(index != methodHandlers.getSelectedRow(type)){
-      methodHandlers.setSelectedRow('Viewer',index);
-    }
-    else {
-      // we are deselecting the same row, already done
-      methodHandlers.setSelectedRow(type,-1);
-      methodHandlers.invokeHandlers("HeaderFresh"+type)
-      return
+    console.log("setclickedRow refs="+JSON.stringify(this.$refs))
+
+    // if on , toggle off
+    const selectedClass=' selected';
+
+    // if already selected
+    if(methodHandlers.getSelectedRow(type) != -1){
+
+      console.log("clearing selection for row = "+methodHandlers.getSelectedRow(type))
+      //selectedClass=' selected'
+
+      this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className=this.removeString(this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className,selectedClass);
+
+      // if the current index is NOT  the same (we are selecting a different row)
+      if(index != methodHandlers.getSelectedRow(type)){
+        methodHandlers.setSelectedRow('Viewer',index);
+      }
+      else {
+        // we are deselecting the same row, already done
+        methodHandlers.setSelectedRow(type,-1);
+        methodHandlers.invokeHandlers("HeaderFresh"+type)
+        return
+      }
+
+    } else {
+      methodHandlers.setSelectedRow(type,index);
+      //selectedClass=' selected' //                      'blue'
     }
 
-  } else {
-    methodHandlers.setSelectedRow(type,index);
-    selectedClass=' selected' //                      'blue'
-  }
-  this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className+=selectedClass                                                                         //style='background-color:'+style1+';';
+    this.$refs[type+methodHandlers.getSelectedRow(type)].$el.className+=selectedClass
 
-  console.log("setClickedRow clicked index="+index+" type="+type+" field="+field);
-  methodHandlers.invokeHandlers("HeaderFresh"+type)
-  return
+    console.log("setClickedRow clicked index="+ index+" type="+type+" field="+field);
+    methodHandlers.invokeHandlers("HeaderFresh"+type)
+    return
   },
 
 
@@ -216,10 +226,10 @@ methods:{
   }
 },
 created(){
-   console.log("content created this="+JSON.stringify(this))
-   methodHandlers.registerHandler('dbltap'+this.info.Type, {func:this.signalDblTap, ctx:this.info.Type})
-},
-  data(){
+     console.log("content created this="+JSON.stringify(this))
+     methodHandlers.registerHandler('dbltap'+this.info.Type, {func:this.signalDblTap, ctx:this.info.Type})
+  },
+data(){
     const pressGesture=0;
     const lastOnStart=0;
 

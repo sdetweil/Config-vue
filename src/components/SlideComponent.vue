@@ -14,13 +14,17 @@ export default{
   name: 'Slide',
   components: { Footer,Header, Content },
   emits: [ 'changepage' ],
+
   methods:{
      changepage(direction){
        console.log("received change page event, direction="+direction)
        this.$emit('changepage',direction)
      }
   },
- props: {
+
+  props: {
+
+    // layout of the field descriptions
     info: { type: Object,
          name: {
            type: String,
@@ -35,12 +39,14 @@ export default{
            }
          }
      },
-       data: {
-         type:Object,
-         default: function() {
-           return {}
-         }
-       },
+
+     // slide data
+     data: {
+       type:Object,
+       default: function() {
+         return {}
+       }
+     },
    },
 }
 
