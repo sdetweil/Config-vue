@@ -16,6 +16,7 @@
     "@types/vue2-hammer": "^2.1.2",
     "core-js": "^3.6.5",
     "hammerjs": "^2.0.8",
+    "uuid": "^8.3.1",
     "vue": "^3.0.0-0",
     "vue-i18n": "^9.0.0-beta.6",
     "vue-router": "^4.0.0-0",
