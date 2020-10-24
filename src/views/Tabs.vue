@@ -23,43 +23,32 @@ export default{
   emits: ['changepage'],
   methods:{
     advanceSlide1() {
-        console.log("handler invoked")
-        console.log("this="+JSON.stringify(this))
-        this.$refs.slides1.slideNext()
+        console.log("forward slide handler invoked")
+        //console.log("this="+JSON.stringify(this.$refs))
+        this.$refs.slides1.$el.slideNext()
      },
     reverseSlide(){
-        console.log("handler invoked")
-       this.$refs.slides1.slidePrev()
+       console.log("reverse slide handler invoked")
+       this.$refs.slides1.$el.slidePrev()
      },
-     advanceSlide(ctx) {
-       console.log("handler invoked")
-       ctx.$refs.slides1.slideNext()
-     },
-     changepage1(direction){
-       console.log("received change page event, direction="+direction)
-       this.$emit('changepage',direction)
-     },
-     changepage(direction){
 
-      console.log("changing slide direction="+direction+" this="+JSON.stringify(this)+" refs="+JSON.stringify(this.$refs)+" slides1="+JSON.stringify(this.$refs.slides1))
+     changepage(direction){
+      console.log("changing slide direction="+direction)
       if(direction){
-        for(const key of Object.keys(this.$refs.slides1)){
-           console.log("slides1 key="+key)
-        }
-        methodHandlers.invokeHandlers("advanceSlide")
-        //this.$refs.slides1.slideNext()
+        //methodHandlers.invokeHandlers("advanceSlide")
+        this.$refs.slides1.$el.slideNext()
       }
       else
-        methodHandlers.invokeHandlers("reverseSlide")
-        this.$refs.slides1.slidePrev()
+        //methodHandlers.invokeHandlers("reverseSlide")
+        this.$refs.slides1.$el.slidePrev()
         console.log("next event")
      }
   },
 
 created(){
 
-  methodHandlers.registerHandler('advanceSlide',{func:this.advanceSlide1, ctx:null } )
-  methodHandlers.registerHandler('reverseSlide',{func:this.reverseSlide, ctx:null } )
+  //methodHandlers.registerHandler('advanceSlide',{func:this.advanceSlide1, ctx:null } )
+  //methodHandlers.registerHandler('reverseSlide',{func:this.reverseSlide, ctx:null } )
   methodHandlers.setSelectedRow('Viewer',-1);
   methodHandlers.setSelectedRow('DataSource',-1);
   methodHandlers.setSelectedRow('Image',-1);

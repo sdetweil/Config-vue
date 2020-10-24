@@ -1,8 +1,8 @@
 <template>
 <!-- ion-content style="height=100%"> -->
   <ion-row :ref="info.Type+i" v-for="(row,i) in data[info.Type+'s']" :key="row+'.Name'"
-      v-press @press="deleteRow(i, info.Type)"
-       v-dbltap="addeditClicked(2,i,info.Type,'edit', $event)"
+      v-press="info.Type" @press="deleteRow(i, info.Type)"
+      v-dbltapd="info.Type"   @dbltap="addeditClicked(2,i,info.Type,'edit', $event)"
     >
     <ion-col v-for="(field) in info.Fields" :key="field.Name" :size="field.width" class = " colb  center " @click="setClickedRow(i,info.Type,field.Name, $event)" >
       <ion-list v-if="field.Name=='Tags'"  >
@@ -65,21 +65,20 @@ export default{
    },
 
 directives:{
-    dbltap: {
+    dbltapd: {
       created:function(el){
         console.log("dbltap created")
-        console.log("parms="+JSON.stringify(el,' ',2))
+        //console.log("parms="+JSON.stringify(el,' ',2))
       },
-      mounted(el){
+      // eslint-disable-next-line
+      mounted(el, binding, vnode) {
+
         let lastOnStart = 0;
         const onStart = function(ctx) {
             const DOUBLE_CLICK_THRESHOLD = 500;
-
             const now = Date.now();
-
             if (Math.abs(now - lastOnStart) <= DOUBLE_CLICK_THRESHOLD) {
-              console.log("should fire dbltap"+JSON.stringify(ctx))
-              methodHandlers.invokeHandlers('dbltap'+ctx)
+              methodHandlers.invokeHandlers('dbltap'+binding.value)
               lastOnStart = 0;
             } else {
               lastOnStart = now;
@@ -104,12 +103,16 @@ directives:{
       }
     },
     press:{
-
+      created:function(el){
+        console.log("press created")
+        //console.log("parms="+JSON.stringify(el,' ',2))
+      },
       unbind: function(){
          console.log("press unbind called")
       },
-      mounted(el){
-        console.log("press mounted called for el="+JSON.stringify(el))
+     // eslint-disable-next-line
+     mounted(el, binding, vnode) {
+        console.log("press mounted called for type=="+JSON.stringify(binding.value))
      /*   for (const key of Object.keys(Hammer)){
            console.log("hammer key="+key)
         }
@@ -149,7 +152,8 @@ methods:{
   },
 
   addeditClicked(mode, row, type, imageName){
-    console.log("addedit clicked mode="+mode+" type="+type+" returning imagename="+imageName);return imageName
+    console.log("addedit clicked mode="+mode+" type="+type+" row="+row+" returning imagename="+imageName);
+    return imageName
   },
   deleteRow(index, type){ console.log("delete row directive called="+index+" type="+type); return},
 
@@ -198,15 +202,17 @@ methods:{
   },
 
 
-  signalPress(type){
+  signalDblTap(type){
       // double tap event fire
-      console.log("emitting doubletap")
-      this.$emit('dbltap'+type)
+      //console.log("emitting doubletap r="+type+" "+JSON.stringify(this.$refs))
+      // use the type and selected row to fire appropriate event..
+      this.$refs[type+methodHandlers.getSelectedRow(type)].$emit('dbltap')
+      //
   }
 },
 created(){
    console.log("content created this="+JSON.stringify(this))
-   methodHandlers.registerHandler('dbltap'+this.info.Type, {func:this.signalPress, ctx:this.info.Type})
+   methodHandlers.registerHandler('dbltap'+this.info.Type, {func:this.signalDblTap, ctx:this.info.Type})
 },
   data(){
     const pressGesture=0;
