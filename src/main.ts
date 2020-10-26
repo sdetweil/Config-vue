@@ -24,11 +24,12 @@ import '@ionic/vue/css/display.css';
 import './theme/variables.css';
 //import VueHammer  from 'vue2-hammer';
 
+import axios from 'axios';
+
 const app = createApp(App)
   .use(IonicVue)
   .use(router);
 
-//app.use(VueHammer)
 
 router.isReady().then(() => {
   app.mount('#app');
