@@ -1,4 +1,9 @@
 <template>
+
+<!-- ion-content -->
+<!-- ion-infinite-scroll threshold="100px" >
+    <ion-infinite-scroll-content -->
+<ion-grid>
 <!-- <ion-item-sliding
     v-for="(row, i) in data[info.Type + 's']"
     :key="row + '.Name'"
@@ -65,6 +70,11 @@
       </ion-row>
  <!--   </ion-item>
   </ion-item-sliding> -->
+  </ion-grid>
+    <!-- /ion-infinite-scroll-content>
+  </ion-infinite-scroll -->
+  <!-- /ion-content -->
+
 </template>
 
 <script>
@@ -73,6 +83,10 @@
         IonCol,
         IonList,
         IonItem,
+      //  IonContent,
+     //   IonInfiniteScroll,
+     //   IonInfiniteScrollContent,
+        IonGrid,
         modalController,
         actionSheetController
      // IonItemSliding,
@@ -87,11 +101,11 @@
     import "../../public/css/custom.css";
     import DataService from "../services/dataservice.js";
 
-    import ViewerModal from "./ViewerModal.vue";
-    import DatasourceModal from "./DatasourceModal.vue";
-    import ImageModal from "./ImageModal.vue";
-    import TagModal from "./TagModal.vue";
-    import FileModal from "./FileModal.vue";
+    import ViewerModal from "../modals/ViewerModal.vue";
+    import DatasourceModal from "../modals/DatasourceModal.vue";
+    import ImageModal from "../modals/ImageModal.vue";
+    import TagModal from "../modals/TagModal.vue";
+    import FileModal from "../modals/FileModal.vue";
 
     const Constants = {
         NOT_SELECTED: -1,
@@ -106,6 +120,10 @@
             IonCol,
             IonList,
             IonItem,
+        // IonInfiniteScroll,
+        // IonInfiniteScrollContent,
+        //  IonContent,
+            IonGrid,
          // IonItemSliding,
          // IonItemOptions,
          // IonItemOption
@@ -139,9 +157,7 @@
         },
         directives: {
             dbltapd: {
-               // created: function(el){
-                //  const v = this.signalPress;
-               // },
+
                 // eslint-disable-next-line
                 mounted(el, binding, vnode) {
                  console.log("vndoe="+el.id)
@@ -150,6 +166,7 @@
                     let canceltimerHandle=0;
                     let clickCount=0;
 
+                    // mouse up
                     const onEnd = function (data){
                         console.log("onEnd triggered")
                         if(timerHandle && clickCount==1){
@@ -159,16 +176,22 @@
                         }
                     };
 
+                    // mouse down
                     const onStart = function(data) { // function(data) {
                         clickCount++;
                         console.log("enter 'start'")
                         const DOUBLE_CLICK_THRESHOLD = 600;
+
+                        // net time now
                         const now = Date.now();
+
+                        // if more than one click, could be our double click
                         if(clickCount>1){
+
                             console.log("checking limit")
                             if (Math.abs(now - lastOnStart) <= DOUBLE_CLICK_THRESHOLD) {
-                                console.log("double")
-                                // if we have double click,
+                                console.log("double click")
+                                // we have double click,
                                 // and timer is running
                                 if(timerHandle){
                                     console.log("canceling timer")
@@ -179,10 +202,12 @@
                                 }
                                 // invoke the double click event
                                 console.log("component invoking handler for dbltap" + binding.value)
+                                // and indicate we are done
                                 lastOnStart = 0;
                                 clickCount=0;
                                 methodHandlers.invokeHandlers("dbltap" + binding.value);
                             } else {
+                               // over the time limit, so can't be double click
                                if(clickCount>2)
                                  clickCount=0
                                console.log("not over the limit count="+clickCount)
@@ -200,6 +225,8 @@
                                 },
                                 DOUBLE_CLICK_THRESHOLD+50
                             );
+                            // start a timer to cancel the long press if we go over the double click time
+                            // means we didn't get another click
                             canceltimerHandle= setTimeout(function(){
                                  console.log("cancel timer invoking handler");
                                  clearTimeout(timerHandle)
@@ -216,25 +243,14 @@
                         name:'DoubleTap',
                         el: el,
                         threshold: 0,
-                        onStart: data => {
-                            onStart(data);
-                        },
+                        onStart: data => { onStart(data);},
                         onEnd: data => { onEnd(data)},
+                        // pass the element id to the functions
                         data: el.id
                     });
 
                     gesture.enable();
-                  /*  methodHandlers.registerHandler("press" + el.id, {
-                        func: this.signalPress,
-                        ctx: this.info.Type
-                    }); */
                 },
-                bind: function() {
-                    console.log("dbltap bind called");
-                },
-                unbind: function() {
-                    console.log("dbltap unbind called");
-                }
             },
         },
 

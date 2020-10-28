@@ -1,6 +1,4 @@
 <template>
-  <ion-page>
-    <ion-content :fullscreen="true">
       <ion-slides ref="slides1">
         <!-- :options="slideOps" -->
         <ion-slide style="display:block;" v-for="(slide, i) in slides" :key="i">
@@ -11,20 +9,26 @@
           ></Slide>
         </ion-slide>
       </ion-slides>
-    </ion-content>
-  </ion-page>
 </template>
 
 <script>
-import { IonPage, IonSlide, IonSlides, IonContent } from "@ionic/vue"; //IonRefresher, IonSlide, IonSlides, IonContent,  IonRow, IonCol , IonList, IonItem,
+import {
+  IonSlide,
+  IonSlides,
+} from "@ionic/vue";
 import Slide from "../components/SlideComponent.vue";
 import * as methodHandlers from "../composite/methodHandlers.js";
 import DataService from "../services/dataservice.js";
 
 export default {
   name: "Tab1",
-  components: { IonPage, IonSlide, IonSlides, Slide, IonContent },
-  //emits: ['changepage'],
+  components: {
+  //IonPage,
+  IonSlide,
+  IonSlides,
+  Slide,
+  //IonContent
+  },
   methods: {
     changepage(direction) {
       console.log("changing slide direction=" + direction);
@@ -44,11 +48,11 @@ export default {
     methodHandlers.setSelectedRow("Image", -1);
     methodHandlers.setSelectedRow("Tag", -1);
     this.serverdata = this.data;
-    DataService.setTypes(this.datatypes)
-    DataService.setServerAddress("192.168.2.44:8099")
-    DataService.reloadData().then( sdata =>  {
+    DataService.setTypes(this.datatypes);
+    DataService.setServerAddress("192.168.2.44:8099");
+    DataService.reloadData().then(sdata => {
       //console.log("back from get server data " + JSON.stringify(sdata));
-      this.serverdata=sdata
+      this.serverdata = sdata;
     });
   },
   data() {
@@ -144,12 +148,12 @@ export default {
       Type: "Tag",
       Fields: [{ Name: "value", width: 4 }, { Name: "description", width: 8 }]
     };
-    const datatypes=['Tags','DataSources','Viewers','Images'];
+    const datatypes = ["Tags", "DataSources", "Viewers", "Images"];
     const slides = [viewerFields, dataSourceFields, imageFields, tagFields];
     const slideOps = { loop: true };
     //console.log(" prop=" + JSON.stringify(methodHandlers));
 
-    return { data, slides, slideOps, datatypes};
+    return { data, slides, slideOps, datatypes };
   }
 };
 </script>

@@ -6,7 +6,7 @@ See http://ionicframework.com/docs/components/#navigation for more info on
 Ionic pages and navigation.
 -->
 	<ion-header>
-		<ion-title>{{ action}} Tags</ion-title>
+		<ion-title style="text-align:center;">{{ action}} Tag</ion-title>
 	</ion-header>
 
 	<ion-content padding>

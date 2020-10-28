@@ -6,7 +6,7 @@
 		Ionic pages and navigation.
 		-->
 	<ion-header>
-		<ion-title>{{ action }} DataSource</ion-title>
+		<ion-title style="text-align:center;">{{ action }} DataSource</ion-title>
 	</ion-header>
 
 	<ion-content padding>

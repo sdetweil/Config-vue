@@ -1,58 +1,45 @@
 <template>
-	<!--
-Generated template for the ImageModalPage page.
-
-See http://ionicframework.com/docs/components/#navigation for more info on
-Ionic pages and navigation.
--->
 	<ion-header>
-		<ion-title>{{ action }} Image</ion-title>
+		<ion-title style="text-align:center;">{{ action }} Viewer </ion-title>
 	</ion-header>
 
-	<ion-content padding>
+	<ion-content >
 		<ion-grid>
-			<ion-row
-			@dblTap="doubleClick(imagecopy, true)"
-			>
+			<ion-row>
 				<ion-col col-2>
-					<label for="vname" width="10">Name:</label>
+					<label for="vname">Name:</label>
 				</ion-col>
-				<ion-col col-8 class=" dashed-border">
-					<input
-						v-model="imagecopy.Name"
-						type="text"
-						id="vname"
-						align="left"
-					/>
+				<ion-col col-8>
+					<ion-input  type="text" id="vname" align="left" v-model="viewercopy.Name" ></ion-input>
 				</ion-col>
 			</ion-row>
 			<ion-row>
 				<ion-col col-2>
 					<label for="vdescription">Description:</label>
 				</ion-col>
-				<ion-col col-8 class=" dashed-border">
-					<input
-						v-model="imagecopy.Description"
+				<ion-col col-8 class="col colb">
+					<ion-input
 						type="text"
 						id="vdescription"
-						align="left"
-						class="dashed-border"
-					/>
+						v-model="viewercopy.Description"
+					>
+					</ion-input>
 				</ion-col>
 			</ion-row>
-			<ion-row>
+		<ion-row>
 				<ion-col col-2>
 					<label for="vtags"> Tags:</label>
 				</ion-col>
-				<ion-col col-8>
+				<ion-col>
 					<ion-select
 						title="Tags"
 						multiple="true"
 						id="vtags"
-						v-model="imagecopy.Tags"
+						v-model="viewercopy.Tags"
 						okText="Okay"
 						cancelText="Dismiss"
 						:compareWith="checkSelectedTag"
+						compare-with="checkSelectedTag"
 						>
 						<ion-label>Tags</ion-label>
 						<ion-select-option v-for="(tag) in tags" :key="tag._id"
@@ -61,41 +48,46 @@ Ionic pages and navigation.
 					</ion-select>
 				</ion-col>
 			</ion-row>
-
-			<ion-row>
+		<ion-row>
 				<ion-col col-2>
-					<label for="vsource"> Source:</label>
+					<label for="vdays">Advance:</label>
 				</ion-col>
-				<ion-col col-8>
-					<ion-select
-						style="width:85%;"
-						id="vsource"
-						v-model="imagecopy.DataSource"
-						:compareWith="checkSelectedSource"
-						okText="Okay"
-						cancelText="Dismiss"
-						@ionChange="f()"
+				<ion-col col-2 class="dashed-border">
+					<ion-input
+						type="number"
+						id="vdays"
+						class="dashed-border"
+						v-model="viewercopy.Advance"
 					>
-						<ion-select-option
-							v-for="(source) in datasources" :key="source._id"
-							:value="source._id"
-							>{{ source.Name }}
-						</ion-select-option>
-					</ion-select>
+					</ion-input>
 				</ion-col>
 			</ion-row>
-
 			<ion-row>
 				<ion-col col-2>
-					<label for="vpath"> Path from Source:</label>
+					<label for="vrate"> Rate:</label>
+				</ion-col>
+				<ion-col class="dashed-border">
+					<ion-input
+						type="number"
+						id="vrate"
+						class="dashed-border"
+						v-model="viewercopy.ImageRefreshRate"
+					>
+					</ion-input>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col col-2>
+					<label for="vactive"> Active:</label>
 				</ion-col>
 				<ion-col col-10>
-					<span id="vpath" class="dashed-border">{{
-						imagecopy.PathFromSource
-					}}</span>
+					<ion-checkbox
+						id="vactive"
+						@input="viewercopy.Active = $event.target.value"
+						:value="viewercopy.Active"
+					></ion-checkbox>
 				</ion-col>
 			</ion-row>
-
 		</ion-grid>
 	</ion-content>
 	<ion-footer>
@@ -116,6 +108,9 @@ Ionic pages and navigation.
 </template>
 <script>
 import {
+	IonCheckbox,
+	IonHeader,
+	IonTitle,
 	IonGrid,
 	IonRow,
 	IonCol,
@@ -123,15 +118,18 @@ import {
 	IonSelectOption,
 	IonContent,
 	IonFooter,
-	IonHeader,
 	IonIcon,
 	IonLabel,
-	IonTitle,
+	IonInput,
 	modalController
 } from "@ionic/vue";
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent( {
 	components: {
+		IonCheckbox,
+		IonHeader,
+		IonTitle,
 		IonGrid,
 		IonRow,
 		IonCol,
@@ -139,21 +137,20 @@ export default {
 		IonSelectOption,
 		IonContent,
 		IonFooter,
-		IonHeader,
 		IonIcon,
 		IonLabel,
-		IonTitle
+		IonInput
 	},
-	name: "ImageModal",
+	name: "ViewerModal",
 	methods: {
 		closeModal() {
-			console.log("image modal closing")
+			console.log("viewer modal closing")
 			modalController.dismiss();
 		},
 		saveModal()
 		{
-			console.log("image modal save")
-			modalController.dismiss({type:'image',data:this.imagecopy, files:[] });
+			console.log("viewer modal save")
+			modalController.dismiss({type:'viewer',data:this.viewercopy});
 		},
 		checkSelectedTag(tag1, tag2){
 			console.log("comparing "+tag1+" with "+tag2)
@@ -161,17 +158,13 @@ export default {
 				return tag2.includes(tag1)
 			return tag1===tag2;
 		},
-		checkSelectedSource(source1, source2){
-			return source1==source2;
-		}
 	},
 	data(){
-		const imagecopy={};
-		return {imagecopy}
+		const viewercopy={};
+		return {viewercopy}
 	},
 	created(){
-		this.imagecopy=this.$props.image
-		console.log("image modal created datasource="+JSON.stringify(this.$props.datasources))
+		this.viewercopy=this.$props.viewer
 	},
 	props: {
 		action: {
@@ -180,10 +173,15 @@ export default {
 				return "Sample";
 			}
 		},
-		image: {
+		viewer: {
 			type: Object,
 			default: function() {
 				return {
+					Name: "Test",
+					Description: "no desc",
+					Tags: "",
+					Advance: 1,
+					ImageRefreshRate: "30"
 				};
 			}
 		},
@@ -198,25 +196,7 @@ export default {
 			default: function() {
 				return {};
 			}
-		},
-		datasources : {
-			type: Object,
-			default: function() {
-				return {};
-			}
-		},
-		filedlg:{
-			type: Object,
-			default: function() {
-				return {};
-			}
-		},
-		files:{
-			type: Array,
-			default:	function() {
-				return [];
-			}
 		}
 	}
-};
+});
 </script>

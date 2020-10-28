@@ -5,13 +5,18 @@
 </template>
 
 <script>
+
 import Footer from "../components/FooterComponent.vue";
 import Header from "../components/HeaderComponent.vue";
 import Content from "../components/ContentComponent.vue";
 
 export default {
   name: "Slide",
-  components: { Footer, Header, Content },
+  components: {
+  Footer,
+  Header,
+  Content ,
+  },
   emits: ["changepage"],
 
   methods: {

@@ -56,7 +56,7 @@ import {
   modalController
 } from "@ionic/vue";
 
-import AddressModal from "./AddressModal.vue";
+import AddressModal from "../modals/AddressModal.vue";
 import { addCircleSharp, searchSharp, menuSharp } from "ionicons/icons";
 //import { addIcons } from "ionicons";
 import * as methodHandlers from "../composite/methodHandlers.js";
