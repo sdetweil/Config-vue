@@ -159,7 +159,7 @@ export default {
 
   // this component is created, not do initialization of any data
   created() {
-    console.log(" header created =" + JSON.stringify(this));
+    //console.log(" header created =" + JSON.stringify(this));
     methodHandlers.registerHandler("HeaderFresh" + this.info.Type, {
       func: this.refresh,
       ctx: null
@@ -182,12 +182,6 @@ export default {
         }
       }
     },
-    data: {
-      type: Object,
-      default: function() {
-        return {};
-      }
-    }
   },
   data(){
     const modaltype='';

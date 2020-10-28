@@ -60,6 +60,7 @@ import {
 	IonHeader,
 	IonTitle,
 	IonIcon,
+	modalController
 } from "@ionic/vue";
 
 export default {
@@ -76,11 +77,14 @@ export default {
 	name: "TagModal",
 	methods: {
 		closeModal() {
-			console.log("in closemodal");
+			console.log("tag modal closing")
+			modalController.dismiss();
 		},
-		saveModal() {
-			console.log("in savemodal");
-		}
+		saveModal()
+		{
+			console.log("viewer modal save")
+			modalController.dismiss({type:'tag',data:this.tagcopy});
+		},
 	},
 	data(){
 		const tagcopy={};

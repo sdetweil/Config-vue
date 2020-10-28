@@ -42,8 +42,8 @@
 						compare-with="checkSelectedTag"
 						>
 						<ion-label>Tags</ion-label>
-						<ion-select-option v-for="(tag) in tags" :key="tag.id"
-							:value="tag.id" >{{tag.Value}}
+						<ion-select-option v-for="(tag) in tags" :key="tag._id"
+							:value="tag._id" >{{tag.value}}
 						</ion-select-option>
 					</ion-select>
 				</ion-col>
@@ -120,7 +120,8 @@ import {
 	IonFooter,
 	IonIcon,
 	IonLabel,
-	IonInput
+	IonInput,
+	modalController
 } from "@ionic/vue";
 import { defineComponent } from 'vue';
 
@@ -142,16 +143,18 @@ export default defineComponent( {
 	},
 	name: "ViewerModal",
 	methods: {
+		closeModal() {
+			console.log("viewer modal closing")
+			modalController.dismiss();
+		},
+		saveModal()
+		{
+			console.log("viewer modal save")
+			modalController.dismiss({type:'viewer',data:this.viewercopy});
+		},
 		checkSelectedTag(tag1, tag2){
-			console.log('check tag, comparing '+tag1+' with '+tag2)
 			return tag1==tag2;
 		},
-		closeModal() {
-			console.log("in closemodal");
-		},
-		saveModal() {
-			console.log("in savemodal");
-		}
 	},
 	data(){
 		const viewercopy={};

@@ -4,7 +4,11 @@
       <ion-slides ref="slides1">
         <!-- :options="slideOps" -->
         <ion-slide style="display:block;" v-for="(slide, i) in slides" :key="i">
-          <Slide :info="slide" :data="data" @changepage="changepage"></Slide>
+          <Slide
+            :info="slide"
+            :data="serverdata"
+            @changepage="changepage"
+          ></Slide>
         </ion-slide>
       </ion-slides>
     </ion-content>
@@ -15,7 +19,7 @@
 import { IonPage, IonSlide, IonSlides, IonContent } from "@ionic/vue"; //IonRefresher, IonSlide, IonSlides, IonContent,  IonRow, IonCol , IonList, IonItem,
 import Slide from "../components/SlideComponent.vue";
 import * as methodHandlers from "../composite/methodHandlers.js";
-import DataService from "../services/dataservice";
+import DataService from "../services/dataservice.js";
 
 export default {
   name: "Tab1",
@@ -39,35 +43,25 @@ export default {
     methodHandlers.setSelectedRow("DataSource", -1);
     methodHandlers.setSelectedRow("Image", -1);
     methodHandlers.setSelectedRow("Tag", -1);
+    this.serverdata = this.data;
+    DataService.setTypes(this.datatypes)
+    DataService.setServerAddress("192.168.2.44:8099")
+    DataService.reloadData().then( sdata =>  {
+      //console.log("back from get server data " + JSON.stringify(sdata));
+      this.serverdata=sdata
+    });
+  },
+  data() {
+    const serverdata = {};
+    return { serverdata };
   },
   setup() {
-    const adatasource = {
-      Name: "datasource name",
-      Type: { Type: " File" },
-      Active: true,
-      Root: "/",
-      id: 9
-    };
-    const bdatasource = {
-      Name: "datasource name2",
-      Type: { Type: " File" },
-      Active: false,
-      Root: "/",
-      id: 65
-    };
-    const aimage = {
-      Name: "image",
-      id: 11,
-      Tags: [42, 62],
-      DataSource: 9,
-      PathFromSource: "/somepath"
-    };
-
+    // default data
     const data = {
       Viewers: [
         {
           Name: "viewer1",
-          id: 1,
+          _id: 1,
           Advance: 5,
           Tags: [12, 22, 32],
           ImageRefreshRate: 10,
@@ -75,25 +69,48 @@ export default {
         },
         {
           Name: "viewer2",
-          id: 2,
+          _id: 2,
           Advance: 5,
           Tags: [42, 52, 62],
           ImageRefreshRate: 10,
           Active: false
         }
       ],
-      DataSources: [adatasource, bdatasource],
-      Images: [aimage],
+      DataSources: [
+        {
+          Name: "datasource name",
+          Type: { Type: " File" },
+          Active: true,
+          Root: "/",
+          _id: 9
+        },
+        {
+          Name: "datasource name2",
+          Type: { Type: " File" },
+          Active: false,
+          Root: "/",
+          _id: 65
+        }
+      ],
+      Images: [
+        {
+          Name: "image",
+          _id: 11,
+          Tags: [42, 62],
+          DataSource: 9,
+          PathFromSource: "/somepath"
+        }
+      ],
       Tags: [
-        { Value: "tag1", id: 12, Description: "tag 1" },
-        { Value: "tag2", id: 22, Description: "tag 22" },
-        { Value: "tag3", id: 32, Description: "tag 32" },
-        { Value: "tag4", id: 42, Description: "tag 42" },
-        { Value: "tag5", id: 52, Description: "tag 52" },
-        { Value: "tag6", id: 62, Description: "tag 62" }
+        { value: "tag1", _id: 12, description: "tag 1" },
+        { value: "tag2", _id: 22, description: "tag 22" },
+        { value: "tag3", _id: 32, description: "tag 32" },
+        { value: "tag4", _id: 42, description: "tag 42" },
+        { value: "tag5", _id: 52, description: "tag 52" },
+        { value: "tag6", _id: 62, description: "tag 62" }
       ]
     };
-
+    // description of the form fields, used by all the display functions and dialogs
     const viewerFields = {
       Type: "Viewer",
       Fields: [
@@ -125,13 +142,14 @@ export default {
     };
     const tagFields = {
       Type: "Tag",
-      Fields: [{ Name: "Value", width: 4 }, { Name: "Description", width: 8 }]
+      Fields: [{ Name: "value", width: 4 }, { Name: "description", width: 8 }]
     };
+    const datatypes=['Tags','DataSources','Viewers','Images'];
     const slides = [viewerFields, dataSourceFields, imageFields, tagFields];
     const slideOps = { loop: true };
-    console.log(" prop=" + JSON.stringify(methodHandlers));
+    //console.log(" prop=" + JSON.stringify(methodHandlers));
 
-    return { data, slides, slideOps };
+    return { data, slides, slideOps, datatypes};
   }
 };
 </script>

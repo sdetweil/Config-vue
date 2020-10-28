@@ -1,5 +1,5 @@
 <template>
-  <Header :info="info" :data="data"></Header>
+  <Header :info="info" ></Header>
   <Content :info="info" :data="data"></Content>
   <Footer @changepage="changepage"></Footer>
 </template>

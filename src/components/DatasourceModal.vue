@@ -118,7 +118,8 @@ import {
 	IonHeader,
 	IonInput,
 	IonIcon,
-	IonCheckbox
+	IonCheckbox,
+	modalController
 } from "@ionic/vue";
 
 export default {
@@ -143,11 +144,14 @@ export default {
 			return tag1==tag2;
 		},
 		closeModal() {
-			console.log("in closemodal");
+			console.log("datasource modal closing")
+			modalController.dismiss();
 		},
-		saveModal() {
-			console.log("in savemodal");
-		}
+		saveModal()
+		{
+			console.log("viewer modal save")
+			modalController.dismiss({type:'datasource',data:this.datasourcecopy});
+		},
 	},
 	data() {
 		const datasourcecopy = {};

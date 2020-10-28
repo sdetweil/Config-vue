@@ -11,7 +11,9 @@ Ionic pages and navigation.
 
 	<ion-content padding>
 		<ion-grid>
-			<ion-row>
+			<ion-row
+			@dblTap="doubleClick(imagecopy, true)"
+			>
 				<ion-col col-2>
 					<label for="vname" width="10">Name:</label>
 				</ion-col>
@@ -54,9 +56,8 @@ Ionic pages and navigation.
 						compare-with="checkSelectedTag"
 						>
 						<ion-label>Tags</ion-label>
-						<ion-select-option v-for="(tag) in tags" :key="tag.id"
-							:value="tag.id"
-							>{{tag.Value}}
+						<ion-select-option v-for="(tag) in tags" :key="tag._id"
+							:value="tag._id" >{{tag.value}}
 						</ion-select-option>
 					</ion-select>
 				</ion-col>
@@ -75,7 +76,6 @@ Ionic pages and navigation.
 						okText="Okay"
 						cancelText="Dismiss"
 						@ionChange="f()"
-						:value="imagecopy.DataSource"
 					>
 						<ion-select-option
 							v-for="(source) in datasources" :key="source.id"
@@ -86,9 +86,7 @@ Ionic pages and navigation.
 				</ion-col>
 			</ion-row>
 
-			<ion-row
-				@dblTap="doubleClick(thisimage, true)"
-			>
+			<ion-row>
 				<ion-col col-2>
 					<label for="vpath"> Path from Source:</label>
 				</ion-col>
@@ -98,6 +96,7 @@ Ionic pages and navigation.
 					}}</span>
 				</ion-col>
 			</ion-row>
+
 		</ion-grid>
 	</ion-content>
 	<ion-footer>
@@ -129,6 +128,7 @@ import {
 	IonIcon,
 	IonLabel,
 	IonTitle,
+	modalController
 } from "@ionic/vue";
 
 export default {
@@ -148,11 +148,14 @@ export default {
 	name: "ImageModal",
 	methods: {
 		closeModal() {
-			console.log("in closemodal");
+			console.log("image modal closing")
+			modalController.dismiss();
 		},
-		saveModal() {
-			console.log("in savemodal");
-		}
+		saveModal()
+		{
+			console.log("image modal save")
+			modalController.dismiss({type:'image',data:this.imagecopy, files:[] });
+		},
 	},
 	data(){
 		const imagecopy={};
@@ -198,6 +201,12 @@ export default {
 			type: Object,
 			default: function() {
 				return {};
+			}
+		},
+		files:{
+			type: Array,
+			default:	function() {
+				return [];
 			}
 		}
 	}
