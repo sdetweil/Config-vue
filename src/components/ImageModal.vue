@@ -52,8 +52,7 @@ Ionic pages and navigation.
 						v-model="imagecopy.Tags"
 						okText="Okay"
 						cancelText="Dismiss"
-						compareWith="checkSelectedTag"
-						compare-with="checkSelectedTag"
+						:compareWith="checkSelectedTag"
 						>
 						<ion-label>Tags</ion-label>
 						<ion-select-option v-for="(tag) in tags" :key="tag._id"
@@ -72,14 +71,14 @@ Ionic pages and navigation.
 						style="width:85%;"
 						id="vsource"
 						v-model="imagecopy.DataSource"
-						compareWith="checkSelectedSource"
+						:compareWith="checkSelectedSource"
 						okText="Okay"
 						cancelText="Dismiss"
 						@ionChange="f()"
 					>
 						<ion-select-option
-							v-for="(source) in datasources" :key="source.id"
-							:value="source.id"
+							v-for="(source) in datasources" :key="source._id"
+							:value="source._id"
 							>{{ source.Name }}
 						</ion-select-option>
 					</ion-select>
@@ -156,6 +155,15 @@ export default {
 			console.log("image modal save")
 			modalController.dismiss({type:'image',data:this.imagecopy, files:[] });
 		},
+		checkSelectedTag(tag1, tag2){
+			console.log("comparing "+tag1+" with "+tag2)
+			if(Array.isArray(tag2))
+				return tag2.includes(tag1)
+			return tag1===tag2;
+		},
+		checkSelectedSource(source1, source2){
+			return source1==source2;
+		}
 	},
 	data(){
 		const imagecopy={};

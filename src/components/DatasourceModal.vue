@@ -48,15 +48,15 @@
 					<ion-select
 						style="max-width:70%;"
 						id="vtypes"
-						v-model="datasourcecopy.Type"
+						v-model="datasourcecopy.Type.Type"
 						okText="Okay"
 						cancelText="Dismiss"
-						compareWith="checkSelectedSource"
+						:compareWith="checkSelectedSource"
 					>
 						<ion-select-option
 							v-for="(type, i) in types"
 							:key="i"
-							value="type"
+							:value="type"
 							>{{ type }}</ion-select-option
 						>
 					</ion-select>

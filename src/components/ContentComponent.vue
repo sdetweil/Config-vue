@@ -343,9 +343,10 @@
                 switch (datatype) {
                     case "Viewer": {
                         if (index != Constants.NOT_SELECTED) {
-                            this.thisviewer = this.$props.data.Viewers[index];
+                            // make a copy
+                            this.thisviewer = JSON.parse(JSON.stringify(this.data.Viewers[index]));
 
-                            this.thisviewer.isActive = this.$props.data.Viewers[index].Active ?
+                            this.thisviewer.isActive = this.data.Viewers[index].Active ?
                                 "true" :
                                 "false";
 
@@ -379,7 +380,7 @@
                     break;
                 case "DataSource": {
                     if (index != Constants.NOT_SELECTED) {
-                        this.thisdatasource = this.data.DataSources[index];
+                        this.thisdatasource = JSON.parse(JSON.stringify(this.data.DataSources[index]));
                         this.thisdatasource.isActive = this.data.DataSources[index].Active ?
                             "true" :
                             "false";
@@ -418,7 +419,7 @@
                 break;
                 case "Image": {
                     if (index != Constants.NOT_SELECTED) {
-                        this.thisimage = this.data.Images[index];
+                        this.thisimage = JSON.parse(JSON.stringify(this.data.Images[index]));
                         this.saveobject[datatype] = JSON.parse(
                             JSON.stringify(this.thisimage)
                         );
@@ -532,11 +533,11 @@
                         case 'datasource':
                             object=this.data.DataSources[index];
                             // check for images using this source
-                            for(let i=0;i<this.images.length; i++)
+                            for(const image of this.data.Images)
                             {
-                                if(this.data.Images[i].DataSource=== object._id)
+                                if(image.DataSource=== object._id)
                                 {
-                                    alert("this DataSource is being used by Image "+ this.data.Images[i].Name);
+                                    alert("this DataSource is being used by Image "+ image.Name);
                                     return;
                                 }
                             }
@@ -667,7 +668,16 @@
             }
         },
 
-        created() {
+        updated(){
+            // register the handlers for long press on each row on each slide
+            console.log("refs = "+JSON.stringify(this.$refs))
+            for(const r of Object.keys(this.$refs)){
+                console.log("registering handler for press"+r)
+                 methodHandlers.registerHandler("press" + r, {
+                        func: this.signalPress,         // function to call
+                        ctx: r                          // name to pass to handler
+                });
+            }
             //console.log("content created this=" + JSON.stringify(this));
             methodHandlers.registerHandler("dbltap" + this.info.Type, {
                 func: this.signalDblTap,
@@ -678,27 +688,11 @@
                 func: this.signalClick,
                 ctx: this.info.Type
             });
-            //for(const t of this.$refs){
-            //    console.log("registerung handler for row="+t)
-
-            //}
             console.log("registering handler for addeditProxy" + this.info.Type)
             methodHandlers.registerHandler("addeditProxy" + this.info.Type, {
                 func: this.addeditProxy,
                 ctx: this.info.Type
             })
-
-
-        },
-        updated(){
-            console.log("refs = "+JSON.stringify(this.$refs))
-            for(const r of Object.keys(this.$refs)){
-                console.log("registering handler for press"+r)
-                 methodHandlers.registerHandler("press" + r, {
-                        func: this.signalPress,
-                        ctx: r
-                });
-            }
         },
         data() {
             const pressGesture = 0;

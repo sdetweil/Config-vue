@@ -38,7 +38,7 @@
 						v-model="viewercopy.Tags"
 						okText="Okay"
 						cancelText="Dismiss"
-						compareWith="checkSelectedTag"
+						:compareWith="checkSelectedTag"
 						compare-with="checkSelectedTag"
 						>
 						<ion-label>Tags</ion-label>
@@ -153,7 +153,10 @@ export default defineComponent( {
 			modalController.dismiss({type:'viewer',data:this.viewercopy});
 		},
 		checkSelectedTag(tag1, tag2){
-			return tag1==tag2;
+			console.log("comparing "+tag1+" with "+tag2)
+			if(Array.isArray(tag2))
+				return tag2.includes(tag1)
+			return tag1===tag2;
 		},
 	},
 	data(){
