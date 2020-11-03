@@ -1,11 +1,11 @@
 <template>
   <Header :info="info" ></Header>
-  <Content :info="info" :data="data"></Content>
-  <Footer @changepage="changepage"></Footer>
+  <Content :info="info" :data="data"  @changepage="changepage" ></Content>
+  <Footer @changepage="changepage" ></Footer>
 </template>
 
 <script>
-
+//
 import Footer from "../components/FooterComponent.vue";
 import Header from "../components/HeaderComponent.vue";
 import Content from "../components/ContentComponent.vue";
@@ -54,3 +54,15 @@ export default {
   }
 };
 </script>
+<style>
+header,
+footer {
+  flex: none;
+}
+
+
+content {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  flex: auto;
+}</style>

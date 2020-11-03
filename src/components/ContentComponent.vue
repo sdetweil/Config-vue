@@ -1,25 +1,18 @@
 <template>
-
-<!-- ion-content -->
-<!-- ion-infinite-scroll threshold="100px" >
-    <ion-infinite-scroll-content -->
-<ion-grid>
-<!-- <ion-item-sliding
-    v-for="(row, i) in data[info.Type + 's']"
-    :key="row + '.Name'"
-    >
-    <ion-item-options side="start">
-      <ion-item-option color="danger" @click="deleteRow(i, info.Type)") expandable>
-        Delete
-      </ion-item-option>
-    </ion-item-options>
-    <ion-item> -->
-      <ion-row
+<ion-content style="height:87%; --padding-bottom:110px; ">
+ <!-- <ion-refresher   slot="fixed" @ionRefresh="doRefresh($event);">
+    <ion-refresher-content
+      refreshingSpinner="circles"
+      refreshingText="refreshing data, please wait">
+    </ion-refresher-content>
+ </ion-refresher> -->
+  <ion-row
     v-for="(row, i) in data[info.Type + 's']"
     :key="row + '.Name'"
 
         :ref="info.Type + i"
         :id="info.Type + i"
+
         @press="deleteRow(i, info.Type)"
         v-dbltapd="info.Type"
         @dbltap="addeditClicked(2, i, info.Type, 'edit', $event)"
@@ -59,21 +52,20 @@
             </ion-item>
           </ion-list>
           <ion-list v-else>
-            <ion-item v-if="field.Name == 'DataSource'" class=" colb  center ">
+            <ion-item  v-if="field.Name == 'DataSource'" class=" colb " style="text-align:left;">
               {{ datasourcefromID(row[field.Name]) }}
             </ion-item>
+             <ion-item v-else-if="field.Name == 'Root'" style="text-align:left;">
+                {{ row[field.Name] }}
+             </ion-item>
             <span v-else class=" colb " style="text-align:center;">
               {{ row[field.Name] }}
             </span>
           </ion-list>
         </ion-col>
       </ion-row>
- <!--   </ion-item>
-  </ion-item-sliding> -->
-  </ion-grid>
-    <!-- /ion-infinite-scroll-content>
-  </ion-infinite-scroll -->
-  <!-- /ion-content -->
+      <!-- <Footer @changepage="changepage" ></Footer> -->
+  </ion-content>
 
 </template>
 
@@ -83,20 +75,20 @@
         IonCol,
         IonList,
         IonItem,
-      //  IonContent,
-     //   IonInfiniteScroll,
-     //   IonInfiniteScrollContent,
-        IonGrid,
+        IonContent,
+    //    IonRefresher,
+    //    IonRefresherContent,
         modalController,
         actionSheetController
-     // IonItemSliding,
-     // IonItemOptions,
-     // IonItemOption,
     } from "@ionic/vue";
-    //import * as Hammer from 'hammerjs';
+
+    //import Footer from "../components/FooterComponent.vue";
+
+    import { defineComponent } from 'vue';
+
     import {
         createGesture
-    } from "@ionic/vue"; //from 'https://cdn.jsdelivr.net/npm/@ionic/core@latest/dist/esm/index.mjs';
+    } from "@ionic/vue";
     import * as methodHandlers from "../composite/methodHandlers.js";
     import "../../public/css/custom.css";
     import DataService from "../services/dataservice.js";
@@ -106,6 +98,7 @@
     import ImageModal from "../modals/ImageModal.vue";
     import TagModal from "../modals/TagModal.vue";
     import FileModal from "../modals/FileModal.vue";
+    import 'hammerjs';
 
     const Constants = {
         NOT_SELECTED: -1,
@@ -113,22 +106,19 @@
             "File", "Samba", "DropBox", "GoogleDrive", "Onedrive"
         ]
     };
-    export default {
+    export default   defineComponent({
         name: "Content",
         components: {
             IonRow,
             IonCol,
             IonList,
             IonItem,
-        // IonInfiniteScroll,
-        // IonInfiniteScrollContent,
-        //  IonContent,
-            IonGrid,
-         // IonItemSliding,
-         // IonItemOptions,
-         // IonItemOption
+          IonContent,
+          //IonRefresher,
+          // IonRefresherContent,
+      //    Footer,
         },
-        emits: ["dbltap", "press", "dbltap2"],
+        emits: ["dbltap", "press", "dbltap2","changepage"],
         props: {
             info: {
                 type: Object,
@@ -156,11 +146,26 @@
             }
         },
         directives: {
+         /*  xtapd: {
+                mounted(el, binding, vnode) {
+                    const pressGesture = createGesture({
+                        name:'DoubleTap',
+                        el: el,
+                        recognizers: [
+                            [window.Hammer.Tap, {taps: 2, interval:350}]
+                        ]
+                    });
+                    pressGesture.enable();
+                    //pressGesture.on('tap', e => {
+                    //  this.dblTap.emit(e);
+                    //})
+                }
+            }, */
             dbltapd: {
 
                 // eslint-disable-next-line
                 mounted(el, binding, vnode) {
-                 console.log("vndoe="+el.id)
+                 //console.log("vndoe="+el.id)
                     let lastOnStart = 0;
                     let timerHandle=0;
                     let canceltimerHandle=0;
@@ -238,7 +243,7 @@
                             );
                         }
                     };
-                    console.log("create gesture this =" + JSON.stringify(el));
+                    //console.log("create gesture this =" + JSON.stringify(el));
                     const gesture = createGesture({
                         name:'DoubleTap',
                         el: el,
@@ -255,6 +260,28 @@
         },
 
         methods: {
+              async doRefresh(refresher){
+                    console.log("refresh requested")
+                    if(this.refresher!==0){
+                        console.log("in refresh")
+                        DataService.reloadData().then((newdata) =>{
+                            this.$props.data=newdata;
+                            if(this.refresher!==1){
+                                this.refresher=1;
+                            }
+                        });
+                    }
+              },
+            changepage(direction) {
+              console.log("received change page event, direction=" + direction);
+              this.$emit("changepage", direction);
+            },
+
+            /*
+
+                set the row clicked
+
+            */
             setClickedRow(index, type, field) {
                 console.log("setclickedRow refs=" + JSON.stringify(this.$refs));
 
@@ -302,12 +329,21 @@
                 methodHandlers.invokeHandlers("HeaderFresh" + type);
                 return;
             },
+            /*
 
+                get the row that is selected (if any)  -1 if none
+
+            */
             getselectedRow(type) {
                 //console.log("get selected returning "+this.selectedRow[type]+" type="+type);
                 return methodHandlers.getSelectedRow(type);
             },
 
+            /*
+
+                get the tag Name/vlaue from the id
+
+            */
             tagfromID(x) {
                 for (const tag of this.data.Tags) {
                     if (tag._id == x) {
@@ -317,6 +353,11 @@
                 return x + " not found";
             },
 
+            /*
+
+                get the datasource Name/vlaue from the id
+
+            */
             datasourcefromID(x) {
                 for (const datasource of this.data.DataSources) {
                     if (datasource._id == x) return datasource.Name;
@@ -527,10 +568,6 @@
                 delete the row, triggered from long press
 
             */
-            deleteRow1(index, type) {
-                console.log("delete row directive called=" + index + " type=" + type);
-                return;
-            },
 
             deleteRow(index,type)
             {
@@ -599,6 +636,11 @@
 
             },
 
+            /*
+
+                delete requested, confirm and delete (or not)
+
+            */
             async confirmDelete(type,object)
             {
                 console.log("in confirm delete");
@@ -611,7 +653,7 @@
                     //  icon: trash,
                       handler: () => {
                         console.log('Destructive clicked');
-                        //this.data.dodelete(object,type)
+                        DataService.dodelete(object,type)
                       }
                     },{
                       text: 'Cancel',
@@ -638,11 +680,7 @@
                 return x.join(" ");
             },
 
-            /*
 
-                set the row clicked
-
-            /*
 
 
             /*
@@ -686,7 +724,7 @@
 
         updated(){
             // register the handlers for long press on each row on each slide
-            console.log("refs = "+JSON.stringify(this.$refs))
+            //console.log("refs = "+JSON.stringify(this.$refs))
             for(const r of Object.keys(this.$refs)){
                 console.log("registering handler for press"+r)
                  methodHandlers.registerHandler("press" + r, {
@@ -711,6 +749,7 @@
             })
         },
         data() {
+            const refresher=0;
             const pressGesture = 0;
             const lastOnStart = 0;
             const rowClass = -1;
@@ -740,8 +779,29 @@
                 thisdatasource,
                 saveobject,
                 parentobject,
-                modal
+                modal,
+                refresher
             };
         }
-    };
+    }
+)
 </script>
+
+<style>
+.selected {
+    background-color:grey;
+    /* color:white; */
+   /* font-weight:bold; */
+}
+
+.center{
+            display: flex;
+            flex-direction:column;
+            justify-content:center;
+}
+.content {
+    height:87%;
+}
+
+
+</style>

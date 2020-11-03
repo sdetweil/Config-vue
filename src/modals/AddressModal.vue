@@ -60,7 +60,8 @@ import {
   IonInput,
   IonCol,
   IonRow,
-  IonFooter
+  IonFooter,
+  IonItem
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 
@@ -75,7 +76,8 @@ export default defineComponent({
     IonInput,
     IonCol,
     IonRow,
-    IonFooter
+    IonFooter,
+    IonItem
   },
   methods: {
     itemSelected(parm: string) {

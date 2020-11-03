@@ -1,0 +1,37 @@
+import { createRouter, createWebHistory } from '@ionic/vue-router';
+import { RouteRecordRaw } from 'vue-router';
+import  Startup from '../views/Startup.vue'
+import  Slides  from '../views/Slides.vue'
+
+import  DataServices  from '@/services/dataservice.js';
+
+
+const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/',
+    component: Startup,
+    beforeEnter(to, from, next) {
+      // if get the stored server address
+      DataServices.getServerAddress().then( (address: string)=> {
+        // if there is one, skip this page and route to home
+        console.log("address string is ="+address)
+        next({path: '/Slides'})
+      }, ()=>{
+        // no server address, let this page run
+        next()
+      })
+    }
+  },
+  {
+    path: '/Slides',
+    component: Slides,
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
+  routes
+})
+
+
+export default router

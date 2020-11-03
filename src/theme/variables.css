@@ -151,6 +151,9 @@ http://ionicframework.com/docs/theming/ */
     --ion-color-light-contrast-rgb: 255,255,255;
     --ion-color-light-shade: #1e2023;
     --ion-color-light-tint: #383a3e;
+     ion-row:selected {
+        backgroundColor: blue;
+      }
   }
 
   /*
@@ -190,6 +193,9 @@ http://ionicframework.com/docs/theming/ */
     --ion-item-background: #000000;
 
     --ion-card-background: #1c1c1d;
+     ion-row:selected {
+        backgroundColor: blue;
+      }
   }
 
 
@@ -234,9 +240,9 @@ http://ionicframework.com/docs/theming/ */
     --ion-tab-bar-background: #1f1f1f;
 
     --ion-card-background: #1e1e1e;
-  ion-row:selected {
-    backgroundColor: blue;
-  }
+      ion-row:selected {
+        backgroundColor: blue;
+      }
   }
 
 }

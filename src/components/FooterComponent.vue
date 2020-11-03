@@ -1,5 +1,5 @@
 <template>
-  <ion-footer padding-bottom="0px;">
+  <ion-footer class="footer">
     <ion-toolbar>
       <ion-buttons slot="start">
         <button ion-button @click="back()">
@@ -39,3 +39,10 @@ export default {
   }
 };
 </script>
+<style>
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+</style>

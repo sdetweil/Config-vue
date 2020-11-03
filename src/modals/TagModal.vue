@@ -16,7 +16,7 @@ Ionic pages and navigation.
 					<label for="vname" width="10">Value</label>
 				</ion-col>
 				<ion-col col-8 class=" dashed-border">
-					<input v-model="tagcopy.Value" type="text" id="vname" align="left" />
+					<input v-model="tagcopy.value" type="text" id="vname" align="left" />
 				</ion-col>
 			</ion-row>
 			<ion-row>
@@ -25,7 +25,7 @@ Ionic pages and navigation.
 				</ion-col>
 				<ion-col col-8 class=" dashed-border">
 					<input
-						v-model="tagcopy.Description"
+						v-model="tagcopy.description"
 						type="text"
 						id="vdescription"
 						align="left"

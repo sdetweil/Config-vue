@@ -1,7 +1,7 @@
 <template>
-      <ion-slides ref="slides1">
+      <ion-slides ref="slides1" style="height:100%">
         <!-- :options="slideOps" -->
-        <ion-slide style="display:block;" v-for="(slide, i) in slides" :key="i">
+        <ion-slide style="display:block;" v-for="(slide, i) in slides" :key="i">   <!--  -->
           <Slide
             :info="slide"
             :data="serverdata"
@@ -41,19 +41,21 @@ export default {
       }
     }
   },
+  beforeCreate(){
+    this.serverdata = this.data;
+    DataService.setTypes(this.datatypes);
 
+    DataService.reloadData().then(sdata => {
+      console.log("back from get server data " + JSON.stringify(sdata));
+      this.serverdata = sdata;
+    });
+
+  },
   created() {
     methodHandlers.setSelectedRow("Viewer", -1);
     methodHandlers.setSelectedRow("DataSource", -1);
     methodHandlers.setSelectedRow("Image", -1);
     methodHandlers.setSelectedRow("Tag", -1);
-    this.serverdata = this.data;
-    DataService.setTypes(this.datatypes);
-    DataService.setServerAddress("192.168.2.44:8099");
-    DataService.reloadData().then(sdata => {
-      //console.log("back from get server data " + JSON.stringify(sdata));
-      this.serverdata = sdata;
-    });
   },
   data() {
     const serverdata = {};
@@ -157,3 +159,12 @@ export default {
   }
 };
 </script>
+<style>
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+
+</style>

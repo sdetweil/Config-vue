@@ -1,57 +1,96 @@
 import Vue from 'vue';
 
 import axios from 'axios';
+import { Plugins } from "@capacitor/core";
+const { Storage } = Plugins;
+
 
 export default {
-	ourserveraddress: '',
 	ourTypes: [],
-	setServerAddress(newaddress) {
-		this.ourserveraddress = newaddress;
-	},
-	setTypes(types) {
-		this.ourTypes = types
-	},
-	reloadData() {
-		return new Promise((resolve) => {
-			const promises = []
-			const serverdata = {}
-			for (const t of this.ourTypes) {
-				promises.push(axios.get('http://' + this.ourserveraddress + '/' + t.toLowerCase()))
-			}
-			Promise.all(promises)
-				.then(values => {
-					for (const i in this.ourTypes) {
-						//console.log(" promises all values="+JSON.stringify(values[i].data))
-						serverdata[this.ourTypes[i]] = values[i].data
-					}
-					//console.log("serverdata="+JSON.stringify(serverdata))
-					resolve(serverdata)
-				})
+	async setServerAddress(newaddress) {
+		return new Promise((resolve)=>{
+			Storage.set({
+              key: "server_ip",
+              value: newaddress
+            }).then(()=>{
+							resolve()
+      });
 		})
 	},
 
-	dodelete(object, type) {
-		return new Promise((resolve, reject) => {
-			const urlstring = "http://" + this.ourserveraddress + "/" + type + "s?id=" + object._id;
+	async getServerAddress() {
+		return new Promise((resolve,reject) =>{
+			Storage.get({ key: "server_ip" }).then((address1)=>{
+				if(address1.value !== null) {
+					console.log("get server address returing "+address1.value)
+					resolve(address1.value)
+				}
+				else {
+					console.log("get server address returing no saved server address")
+					reject(null)
+				}
+			},(error)=>{
+				console.log("storage service failed ="+JSON.stringify(error))
+				reject(null)
+			})
+		});
+	},
 
-			console.log("delete of " + type + "=" + object.Name + "\n url=" + urlstring + "\ndata=" + JSON.stringify(object));
-			axios.delete(urlstring, {}, {})
-				.then(
-					(response) => {
-						if (response.status == 200) {
-							console.log("item deleted");
-							this.doRefresh(false)
-								.then(data => {
-									resolve(data);
-								});
-							//$ionicLoading.hide();
-						} else {
-							reject("item delete failed rc=" + response.status);
+	setTypes(types) {
+		this.ourTypes = types
+	},
+	async reloadData() {
+		return new Promise((resolve) => {
+			const promises = []
+			const serverdata = {}
+			const headers = {
+				'Content-Type': 'application/json;charset=UTF-8',
+				"Access-Control-Allow-Origin": "*",
+			};
+			this.getServerAddress().then((serveraddress)=>{
+				for (const t of this.ourTypes) {
+					promises.push(axios.get('http://' + serveraddress + '/' + t.toLowerCase(), headers))
+				}
+				console.log("in reload data")
+				Promise.all(promises)
+					.then( (values) => {
+						for (const i in this.ourTypes) {
+							//console.log(" promises all values="+JSON.stringify(values[i].data))
+							serverdata[this.ourTypes[i]] = values[i].data
 						}
-					}, (error) => {
-						reject("delete request failed=" + error);
-					}
-				);
+						console.log("serverdata="+JSON.stringify(serverdata))
+						resolve(serverdata)
+					}, (error)=>{
+						console.log("data loading error ="+JSON.stringify(error))
+				})
+			})
+		})
+	},
+
+	async dodelete(object, type) {
+		return new Promise((resolve, reject) => {
+			this.getServerAddress().then((serveraddress)=>{
+				const urlstring = "http://" + serveraddress + "/" + type + "s?id=" + object._id;
+
+				console.log("delete of " + type + "=" + object.Name + "\n url=" + urlstring + "\ndata=" + JSON.stringify(object));
+				axios.delete(urlstring, {}, {})
+					.then(
+						(response) => {
+							if (response.status == 200) {
+								console.log("item deleted");
+								this.doRefresh(false)
+									.then(data => {
+										resolve(data);
+									});
+								//$ionicLoading.hide();
+							} else {
+								reject("item delete failed rc=" + response.status);
+							}
+						}, (error) => {
+							reject("delete request failed=" + error);
+						}
+					);
+				})
 		});
 	},
 
@@ -103,81 +142,84 @@ export default {
 	},
 
 
-	getFiles(urlstring) {
+	async getFiles(urlstring) {
 		return new Promise((resolve) => {
-			const u = 'http://' + this.ourserveraddress + '/files?' + encodeURI(urlstring);
-			console.log("file url=" + u);
-			axios.get(u)
-				.then(res => {
-					console.log("file list retrieved size=" + res.data.length);
-					resolve(res.data);
-				})
+			this.getServerAddress().then((serveraddress)=>{
+				const u = 'http://' + serveraddress + '/files?' + encodeURI(urlstring);
+				console.log("file url=" + u);
+				axios.get(u)
+					.then(res => {
+						console.log("file list retrieved size=" + res.data.length);
+						resolve(res.data);
+					})
+			})
 		});
 	},
 
 
-	saveModal(operation, type, obj, files) {
+	async saveModal(operation, type, obj, files) {
 		this.modaltype = operation;
 		let objectvar = obj;
 		//alert("save");
-		const urlstring = "http://" + this.ourserveraddress + "/" + type + 's';
-		let results
-		console.log("in data savemodal, type=" + type + " operation=" + operation);
-		switch (type) {
-		case 'viewer':
-			objectvar = obj.data;
-			delete objectvar.TagNames
-			break;
-		case 'datasource':
-			objectvar = obj.data;
-			break;
-		case 'tag':
-			objectvar = obj.data;
-			break;
-		case 'image':
-			objectvar = obj.data;
-			delete objectvar.TagNames
-			delete objectvar.DataSourceName;
-
-			console.log("there are " + files.length + " entries in file list + for image=" + JSON.stringify(objectvar));
-
-			results = this.getAddsandDeletes(objectvar, files)
-
-			if (Object.prototype.hasOwnProperty.call(objectvar, "PathFromSource")) {
-
-				const urlstring = "http://" + this.ourserveraddress + "/images";
-				console.log("setting new path for image");
-				if (results.value !== "")
-					objectvar.PathFromSource = results.value;
-
-				if (operation === 'edit') {
-					// now handle and object add/deletes
-					results.addedImages.forEach(
-						function (ia) {
-							//alert("adding image entry="+ia.Name);
-							console.log("will add a record=" + ia.Name);
-							this.add_update_delete('add', urlstring, ia, 'image', false);
-						}
-					)
-					results.deletedImages.forEach(
-						function (ia) {
-							//alert("removing image entry="+ia.Name);
-							console.log("will delete a record=" + ia.Name);
-							this.add_update_delete('delete', urlstring, ia, 'image', false);
-						}
-					)
-				}
+		this.getServerAddress().then((serveraddress)=>{
+			const urlstring = "http://" + serveraddress + "/" + type + 's';
+			let results
+			console.log("in data savemodal, type=" + type + " operation=" + operation);
+			switch (type) {
+			case 'viewer':
+				objectvar = obj.data;
+				delete objectvar.TagNames
 				break;
-			} else {
-				objectvar.Root = results.value;
+			case 'datasource':
+				objectvar = obj.data;
+				break;
+			case 'tag':
+				objectvar = obj.data;
+				break;
+			case 'image':
+				objectvar = obj.data;
+				delete objectvar.TagNames
+				delete objectvar.DataSourceName;
+
+				console.log("there are " + files.length + " entries in file list + for image=" + JSON.stringify(objectvar));
+
+				results = this.getAddsandDeletes(objectvar, files)
+
+				if (Object.prototype.hasOwnProperty.call(objectvar, "PathFromSource")) {
+						const urlstring = "http://" + serveraddress + "/images";
+						console.log("setting new path for image");
+						if (results.value !== "")
+							objectvar.PathFromSource = results.value;
+
+						if (operation === 'edit') {
+							// now handle and object add/deletes
+							results.addedImages.forEach(
+								function (ia) {
+									//alert("adding image entry="+ia.Name);
+									console.log("will add a record=" + ia.Name);
+									this.add_update_delete('add', urlstring, ia, 'image', false);
+								}
+							)
+							results.deletedImages.forEach(
+								function (ia) {
+									//alert("removing image entry="+ia.Name);
+									console.log("will delete a record=" + ia.Name);
+									this.add_update_delete('delete', urlstring, ia, 'image', false);
+								}
+							)
+						}
+						break;
+				} else {
+					objectvar.Root = results.value;
+				}
+				return;
+			default:
+				console.log('unexpected type=' + type + ' in save modal dialog');
+				break;
 			}
-			return;
-		default:
-			console.log('unexpected type=' + type + ' in save modal dialog');
-			break;
-		}
-		console.log("will " + operation + " a record=" + obj.data.Name);
-		this.addUpdateDelete(operation, urlstring, obj.data, type, true);
+			console.log("will " + operation + " a record=" + obj.data.Name);
+			this.addUpdateDelete(operation, urlstring, obj.data, type, true);
+		})
 	},
 
 
