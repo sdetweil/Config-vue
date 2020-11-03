@@ -260,16 +260,25 @@
         },
 
         methods: {
-              async doRefresh(refresher){
+                async doRefresh(refresher){
                     console.log("refresh requested")
                     if(this.refresher!==0){
+                        this.refresher=0;  // prevent recursion
                         console.log("in refresh")
                         DataService.reloadData().then((newdata) =>{
                             this.$props.data=newdata;
+                             refresher.target.complete()
                             if(this.refresher!==1){
                                 this.refresher=1;
                             }
+                        }, (error)=>{
+                            console.log("no new data")
+                             this.refresher=1;
+                            refresher.target.complete()
                         });
+                    }
+                    else {
+                        refresher.target.complete()
                     }
               },
             changepage(direction) {
