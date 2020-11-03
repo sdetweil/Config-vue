@@ -14,7 +14,9 @@
         :id="info.Type + i"
 
         @press="deleteRow(i, info.Type)"
-        v-dbltapd="info.Type"
+
+      >
+             <!--  v-dbltapd="info.Type"
         @dbltap="addeditClicked(2, i, info.Type, 'edit', $event)"
         @dbltap2="
           addeditClicked(
@@ -24,8 +26,7 @@
             getselectedRow(info.Type) == -1 ? 'add' : 'edit',
             $event
           )
-        "
-      >
+        " -->
         <ion-col
           v-for="field in info.Fields"
           :key="field.Name"
@@ -263,13 +264,22 @@
               async doRefresh(refresher){
                     console.log("refresh requested")
                     if(this.refresher!==0){
+                        this.refresher=0;  // prevent recursion
                         console.log("in refresh")
                         DataService.reloadData().then((newdata) =>{
                             this.$props.data=newdata;
+                             refresher.target.complete()
                             if(this.refresher!==1){
                                 this.refresher=1;
                             }
+                        }, (error)=>{
+                            console.log("no new data")
+                             this.refresher=1;
+                            refresher.target.complete()
                         });
+                    }
+                    else {
+                        refresher.target.complete()
                     }
               },
             changepage(direction) {
@@ -749,7 +759,7 @@
             })
         },
         data() {
-            const refresher=0;
+            const refresher=1;
             const pressGesture = 0;
             const lastOnStart = 0;
             const rowClass = -1;
