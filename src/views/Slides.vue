@@ -48,6 +48,9 @@ export default {
     DataService.reloadData().then(sdata => {
       console.log("back from get server data " + JSON.stringify(sdata));
       this.serverdata = sdata;
+    },(error)=>{
+      console.log(" no server found, prototype data used");
+      this.serverdata = this.data;
     });
 
   },

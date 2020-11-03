@@ -1,11 +1,11 @@
 <template>
 <ion-content style="height:87%; --padding-bottom:110px; ">
- <!-- <ion-refresher   slot="fixed" @ionRefresh="doRefresh($event);">
+ <ion-refresher   slot="fixed" @ionRefresh="doRefresh($event);">
     <ion-refresher-content
       refreshingSpinner="circles"
       refreshingText="refreshing data, please wait">
     </ion-refresher-content>
- </ion-refresher> -->
+ </ion-refresher>
   <ion-row
     v-for="(row, i) in data[info.Type + 's']"
     :key="row + '.Name'"
@@ -76,8 +76,8 @@
         IonList,
         IonItem,
         IonContent,
-    //    IonRefresher,
-    //    IonRefresherContent,
+        IonRefresher,
+        IonRefresherContent,
         modalController,
         actionSheetController
     } from "@ionic/vue";
@@ -114,8 +114,8 @@
             IonList,
             IonItem,
           IonContent,
-          //IonRefresher,
-          // IonRefresherContent,
+          IonRefresher,
+           IonRefresherContent,
       //    Footer,
         },
         emits: ["dbltap", "press", "dbltap2","changepage"],

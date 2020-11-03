@@ -40,7 +40,7 @@ export default {
 		this.ourTypes = types
 	},
 	async reloadData() {
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			const promises = []
 			const serverdata = {}
 			const headers = {
@@ -63,6 +63,9 @@ export default {
 					}, (error)=>{
 						console.log("data loading error ="+JSON.stringify(error))
 				})
+			}, (error)=>{
+				console.log("reload no server address")
+				reject(null)
 			})
 		})
 	},
@@ -103,6 +106,9 @@ export default {
 					this.reloadData()
 					.then(data => {
 						resolve(data);
+					},(error)=>{
+						console.log("reload failed")
+						reject(null)
 					});
 			} catch (ex) {
 				reject("refresh ionic failed=" + ex);
