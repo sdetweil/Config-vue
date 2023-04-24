@@ -1,16 +1,14 @@
 {
-  "appId": "io.ionic.starter",
-  "appName": "fribble",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "dist",
-  "plugins": {
-    "SplashScreen": {
-      "launchShowDuration": 0
-    }
-  },
-  "cordova": {},
-
-  "linuxAndroidStudioPath": "/home/sam/android-studio/bin/studio.sh"
-
+	"appId": "io.ionic.starter",
+	"appName": "fribble",
+	"bundledWebRuntime": false,
+	"npmClient": "npm",
+	"webDir": "dist",
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 0
+		}
+	},
+	"cordova": {},
+	"linuxAndroidStudioPath": "/home/sam/android-studio/bin/studio.sh"
 }

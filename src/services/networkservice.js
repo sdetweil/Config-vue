@@ -8,7 +8,7 @@ let counter=0;
 export default {
 	windowHandle: 0,
 	UDPPlugin: 0,
-	ReceiverPort: 8100,
+	ReceiverPort: 8056,
 	BROADCAST_ADDR: "192.168.2.255",
 	MirrorRequest: "DISCOVER_MIRRORSERVER_REQUEST:",
 	expectedResponse: "DISCOVER_MIRRORSERVER_RESPONSE:",
@@ -55,7 +55,9 @@ export default {
 
 												window.chrome.sockets.tcpServer.onAccept.addListener(ha);
 
-													console.log('setup receive listener')
+												console.log('setup receive listener')
+												consolelog("tcp methods =", Object.keys(window.chrome.sockets.tcp))
+												console.log("onReceive methods=", Object.keys(window.chrome.sockets.tcp.onReceive) )
 												window.chrome.sockets.tcp.onReceive.addListener((data, socketId1) => {
 													this.recvListener(data, socketId1, resolve, reject, this)
 												});
